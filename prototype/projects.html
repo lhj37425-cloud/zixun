@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <title>拆解 · 今日一拆</title>
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+
+<svg class="icon-sprite" aria-hidden="true" focusable="false">
+  <symbol id="i-star" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></symbol>
+  <symbol id="i-copy" viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></symbol>
+  <symbol id="i-circle" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/></symbol>
+  <symbol id="i-arrow-right" viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></symbol>
+  <symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></symbol>
+  <symbol id="i-check-circle" viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></symbol>
+  <symbol id="i-x-circle" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></symbol>
+  <symbol id="i-external" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></symbol>
+</svg>
+
+<a class="skip-link" href="#main">跳到正文</a>
+
+<div class="wrap">
+
+  <header class="site-header">
+    <p class="brand"><a class="brand-name" href="index.html">今日一拆</a></p>
+    <nav class="site-nav" aria-label="主导航">
+      <a href="index.html">今日</a>
+      <a href="history.html">往期</a>
+      <a href="projects.html" aria-current="page">拆解</a>
+      <a href="glossary.html">术语表</a>
+    </nav>
+  </header>
+
+  <p class="notice">
+    <svg class="icon" aria-hidden="true" focusable="false"><use href="#i-info"/></svg>
+    <span>这是示例数据，用来看页面效果。接上真实数据后，这条提示会消失。</span>
+  </p>
+
+  <main id="main">
+    <section class="section">
+      <div class="section-head">
+        <h1 class="page-title">拆解</h1>
+        <p class="section-meta">1 个项目</p>
+      </div>
+      <p class="page-intro">在今日页点"开始拆解"，把指令粘贴给 Claude Code 或 TRAE。agent 每拆完一步，这里的进度就会更新。</p>
+
+      <ol class="link-list">
+        <li class="link-card">
+          <div class="link-card-body">
+            <h2 class="link-card-title mono"><a href="projects/example-agent-demo.html">example/agent-demo</a></h2>
+            <p class="link-card-text clamp-2">想弄懂 agent 内部怎么运转的开发者。成熟的 agent 动辄几万行代码，新手打开仓库根本不知道从哪看起。这个项目只保留最核心的部分，几百行就能读完。</p>
+            <div class="link-card-meta">
+              <ol class="steps" aria-label="拆解进度">
+                <li class="step is-done"><svg class="icon" aria-hidden="true" focusable="false"><use href="#i-check"/></svg>一页纸<span class="sr-only">，已完成</span></li>
+                <li class="step is-done"><svg class="icon" aria-hidden="true" focusable="false"><use href="#i-check"/></svg>流程图<span class="sr-only">，已完成</span></li>
+                <li class="step"><svg class="icon" aria-hidden="true" focusable="false"><use href="#i-circle"/></svg>跑起来<span class="sr-only">，未完成</span></li>
+                <li class="step"><svg class="icon" aria-hidden="true" focusable="false"><use href="#i-circle"/></svg>追问<span class="sr-only">，未完成</span></li>
+              </ol>
+            </div>
+            <p class="meta link-card-foot">11 月 16 日开始 · 完成 2/4 · 下一步：跑起来 · 示例项目</p>
+          </div>
+          <svg class="icon link-card-arrow" aria-hidden="true" focusable="false"><use href="#i-arrow-right"/></svg>
+        </li>
+      </ol>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <p>今日一拆 · 每天上午 9 点更新</p>
+  </footer>
+
+</div>
+</body>
+</html>

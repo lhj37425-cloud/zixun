@@ -1,0 +1,184 @@
+{# 今日页和往期某一天的页面共用这个模板。day.is_latest 为真时就是今日页 #}
+{% extends "base.html" %}
+{% import "_macros.html" as ui %}
+
+{% block title %}{% if day is none %}今日一拆{% elif day.is_latest %}今日一拆 · {{ day.date_text }}{% else %}{{ day.date_text }} · 今日一拆{% endif %}{% endblock %}
+
+{% block brand %}
+{% if day is none or day.is_latest %}
+<h1 class="brand">
+  <a class="brand-name" href="{{ root }}index.html">今日一拆</a>
+  {% if day is not none %}
+  <span class="brand-date">{{ day.date_text }} · {{ day.weekday }}</span>
+  {% endif %}
+</h1>
+{% else %}
+{{ super() }}
+{% endif %}
+{% endblock %}
+
+{% block before_main %}
+{% if day is not none and not day.is_latest %}
+<nav class="breadcrumb" aria-label="当前位置">
+  <ol>
+    <li><a href="{{ root }}history.html">往期</a></li>
+    <li aria-current="page">{{ day.date_text }}</li>
+  </ol>
+</nav>
+
+<div class="section-head">
+  <h1 class="page-title">{{ day.date_text }} · {{ day.weekday }}</h1>
+  <a class="text-link" href="{{ root }}index.html">回到今天{{ ui.icon("arrow-right") }}</a>
+</div>
+{% endif %}
+{% if day is not none and day.sample %}
+{{ ui.sample_notice() }}
+{% endif %}
+{% endblock %}
+
+{% block main %}
+{% if day is none %}
+<section class="section">
+  <div class="empty-step">
+    <p>还没有今日数据。每天上午 9 点自动更新之后，这里就会出现内容。</p>
+  </div>
+</section>
+{% else %}
+
+<section class="section" aria-labelledby="dissect-title">
+  <div class="section-head">
+    <h2 id="dissect-title">今日一拆</h2>
+    <p class="section-meta">{{ day.projects_meta }}</p>
+  </div>
+
+  {% if not day.projects_ok %}
+  {{ ui.callout("项目线" ~ day.when ~ "没抓到", ["原因：" ~ day.projects_error, "资讯线不受影响。手动更新做好以后（第 6 步），可以单独重跑项目线。"], "danger") }}
+  {% else %}
+  {% if not day.llm_used %}
+  {{ ui.callout(day.when ~ "没用上 DeepSeek，所以没有中文解读", ["下面的项目只显示原始简介，是按关键词规则挑出来的。配好 API Key 之后，第二天就会恢复。"]) }}
+  {% endif %}
+
+  {% set pick = day.pick %}
+  <article class="card card-pick">
+    <div class="card-top">
+      <span class="badge badge-accent">{{ day.pick_badge }}</span>
+      <span class="meta">{{ pick.source }}</span>
+    </div>
+    <h3 class="repo"><a href="{{ pick.url }}">{{ pick.repo }}</a></h3>
+    {{ ui.repo_meta(pick) }}
+    {% if pick.has_insight %}
+    <p class="one-liner">{{ pick.one_liner }}</p>
+    <dl class="facts">
+      <dt>能解决</dt>
+      <dd>{{ pick.solves }}</dd>
+      <dt>对你</dt>
+      <dd>{{ pick.for_you }}</dd>
+      {% if pick.why_dissect %}
+      <dt>为什么拆它</dt>
+      <dd>{{ pick.why_dissect }}</dd>
+      {% endif %}
+    </dl>
+    {% else %}
+    {{ ui.original_desc(pick) }}
+    {% endif %}
+    {% if pick.progress %}
+    <div class="progress">
+      {{ ui.steps(pick.progress) }}
+      <a class="text-link" href="{{ root }}projects/{{ pick.slug }}.html">{{ "已拆完" if pick.progress.finished else "已完成 " ~ pick.progress.done_count ~ "/4" }}，看拆解{{ ui.icon("arrow-right") }}</a>
+    </div>
+    {% endif %}
+    {% if not pick.finished %}
+    <div class="actions">
+      {{ ui.copy_button(pick.instruction, pick.button_label, primary=true) }}
+      <p class="copy-hint">会复制：<code>{{ pick.instruction }}</code></p>
+    </div>
+    {% endif %}
+  </article>
+
+  {% if day.alternates %}
+  <div class="alternates">
+    {% for alt in day.alternates %}
+    <article class="card card-alt">
+      <div class="card-top">
+        <span class="badge">备选</span>
+        <span class="meta">{{ alt.source }}</span>
+      </div>
+      <h3 class="repo"><a href="{{ alt.url }}">{{ alt.repo }}</a></h3>
+      {{ ui.repo_meta(alt) }}
+      {% if alt.has_insight %}
+      <p class="one-liner">{{ alt.one_liner }}</p>
+      <dl class="facts">
+        <dt>能解决</dt>
+        <dd>{{ alt.solves }}</dd>
+        <dt>对你</dt>
+        <dd>{{ alt.for_you }}</dd>
+      </dl>
+      {% else %}
+      {{ ui.original_desc(alt) }}
+      {% endif %}
+      {% if not alt.finished %}
+      <div class="actions">
+        {{ ui.copy_button(alt.instruction, alt.button_label) }}
+      </div>
+      {% endif %}
+    </article>
+    {% endfor %}
+  </div>
+  {% endif %}
+  {% endif %}
+</section>
+
+<section class="section" aria-labelledby="news-title">
+  <div class="section-head">
+    <h2 id="news-title">今日前沿</h2>
+    <p class="section-meta">{{ day.news_meta }}</p>
+  </div>
+
+  {% if not day.news_ok %}
+  {{ ui.callout("资讯线" ~ day.when ~ "没抓到", ["原因：" ~ day.news_error, "项目线不受影响。手动更新做好以后（第 6 步），可以单独重跑资讯线。"], "danger") }}
+  {% elif day.news %}
+  <ol class="news-list">
+    {% for item in day.news %}
+    <li class="card news-item">
+      <div class="card-top">
+        <span class="tag {{ item.tag_class }}">{{ item.category }}</span>
+        <span class="meta num">{{ item.source }}{% if item.time_text %} · {{ item.time_text }}{% endif %}</span>
+      </div>
+      <h3 class="news-title"><a href="{{ item.url }}">{{ item.title }}</a></h3>
+      {% if item.has_insight %}
+      <dl class="facts">
+        <dt>发生了什么</dt>
+        <dd>{{ item.what }}</dd>
+        <dt>能解决</dt>
+        <dd>{{ item.solves }}</dd>
+        <dt>对你</dt>
+        <dd>{{ item.for_you }}</dd>
+      </dl>
+      {% endif %}
+    </li>
+    {% endfor %}
+  </ol>
+  {% endif %}
+</section>
+
+{% endif %}
+{% endblock %}
+
+{% block footer %}
+{% if day is none %}
+{{ super() }}
+{% else %}
+<p class="num">{{ day.updated_text }}</p>
+<p>
+  {{ ui.line_status(day.projects_ok, "项目线") }}
+  {{ ui.line_status(day.news_ok, "资讯线") }}
+</p>
+{% endif %}
+{% endblock %}
+
+{% block scripts %}
+{% if day is not none %}
+<p class="sr-only" id="copy-status" role="status" aria-live="polite"></p>
+<script src="{{ root }}assets/app.js"></script>
+{% endif %}
+{% endblock %}

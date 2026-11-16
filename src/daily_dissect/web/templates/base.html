@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <title>{% block title %}今日一拆{% endblock %}</title>
+  <link rel="icon" href="{{ root }}assets/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="{{ root }}assets/style.css">
+</head>
+<body>
+
+{% include "_icons.html" %}
+
+<a class="skip-link" href="#main">跳到正文</a>
+
+<div class="wrap">
+
+  <header class="site-header">
+    {% block brand %}
+    <p class="brand"><a class="brand-name" href="{{ root }}index.html">今日一拆</a></p>
+    {% endblock %}
+    <nav class="site-nav" aria-label="主导航">
+      {% for key, label, href in nav %}
+      <a href="{{ root }}{{ href }}"{% if key == active %} aria-current="page"{% endif %}>{{ label }}</a>
+      {% endfor %}
+    </nav>
+  </header>
+
+  {% block before_main %}{% endblock %}
+
+  <main id="main">
+    {% block main %}{% endblock %}
+  </main>
+
+  <footer class="site-footer">
+    {% block footer %}
+    <p>今日一拆 · 每天上午 9 点更新</p>
+    {% endblock %}
+  </footer>
+
+</div>
+
+{% block scripts %}{% endblock %}
+</body>
+</html>

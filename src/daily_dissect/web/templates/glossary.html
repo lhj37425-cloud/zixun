@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% import "_macros.html" as ui %}
+
+{% block title %}术语表 · 今日一拆{% endblock %}
+
+{% block main %}
+<section class="section">
+  <div class="section-head">
+    <h1 class="page-title">术语表</h1>
+    <p class="section-meta">{{ terms | length }} 个术语</p>
+  </div>
+  <p class="page-intro">学过的概念都记在这里。拆解项目时，agent 会把新遇到的概念加进来。</p>
+
+  {% if terms %}
+  <nav aria-label="术语索引">
+    <ul class="term-index">
+      {% for term in terms %}
+      <li><a href="#{{ term.anchor }}">{{ term.name }}</a></li>
+      {% endfor %}
+    </ul>
+  </nav>
+
+  <ul class="term-list">
+    {% for term in terms %}
+    <li class="card term" id="{{ term.anchor }}">
+      <h2 class="term-name">{{ term.name }}</h2>
+      <p class="term-def">{{ term.definition }}</p>
+      {% if term.source_html %}
+      <p class="term-source">第一次出现：{{ term.source_html }}</p>
+      {% endif %}
+    </li>
+    {% endfor %}
+  </ul>
+  {% else %}
+  <div class="empty-step">
+    <p>术语表还是空的。拆解项目时，agent 会把新遇到的概念加进来。</p>
+  </div>
+  {% endif %}
+</section>
+{% endblock %}

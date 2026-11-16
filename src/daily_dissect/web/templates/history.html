@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% import "_macros.html" as ui %}
+
+{% block title %}往期 · 今日一拆{% endblock %}
+
+{% block before_main %}
+{% if days | selectattr("sample") | list %}
+{{ ui.sample_notice() }}
+{% endif %}
+{% endblock %}
+
+{% block main %}
+<section class="section">
+  <div class="section-head">
+    <h1 class="page-title">往期</h1>
+    <p class="section-meta">共 {{ days | length }} 天</p>
+  </div>
+  <p class="page-intro">每天的今日页都会留着，点进去看到的和当天一样。</p>
+
+  {% if days %}
+  <ol class="link-list">
+    {% for day in days %}
+    <li class="link-card">
+      <div class="link-card-body">
+        <h2 class="link-card-title"><a href="{{ root }}{{ day.href }}">{{ day.date_text }} · {{ day.weekday }}</a></h2>
+        <p class="link-card-text clamp-2">{{ day.history_text }}</p>
+        <div class="link-card-meta">
+          {% for badge in day.history_badges %}
+          <span class="badge{{ ' ' ~ badge.cls if badge.cls else '' }}">{% if badge.icon %}{{ ui.icon(badge.icon) }}{% endif %}{{ badge.text }}</span>
+          {% endfor %}
+        </div>
+      </div>
+      {{ ui.icon("arrow-right", "icon link-card-arrow") }}
+    </li>
+    {% endfor %}
+  </ol>
+  {% else %}
+  <div class="empty-step">
+    <p>还没有往期。每天的今日页生成之后，都会出现在这里。</p>
+  </div>
+  {% endif %}
+</section>
+{% endblock %}

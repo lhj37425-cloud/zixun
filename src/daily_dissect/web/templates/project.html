@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+{% import "_macros.html" as ui %}
+
+{% block title %}{{ project.repo }} · 拆解 · 今日一拆{% endblock %}
+
+{% block before_main %}
+<nav class="breadcrumb" aria-label="当前位置">
+  <ol>
+    <li><a href="{{ root }}projects.html">拆解</a></li>
+    <li aria-current="page">{{ project.repo }}</li>
+  </ol>
+</nav>
+{% endblock %}
+
+{% block main %}
+<div class="project-head">
+  <h1 class="project-title">
+    <a href="{{ project.url }}">{{ project.repo }}{{ ui.icon("external") }}<span class="sr-only">（打开 GitHub 页面）</span></a>
+  </h1>
+  <p class="project-meta">
+    <span>{{ project.started_text }}开始</span>
+    <span>完成 {{ project.done_count }}/4</span>
+    <span>{% if project.next_step %}下一步：{{ project.next_step.name }}{% else %}已拆完{% endif %}</span>
+  </p>
+  {% if project.sample %}
+  {{ ui.sample_notice("示例项目：项目是虚构的，只用来检查网页的显示效果。") }}
+  {% endif %}
+  {{ ui.steps(project, linked=true, label="拆解进度，点击跳到对应的一步") }}
+  {% if not project.finished %}
+  {# 没拆完才显示这个按钮；四步都完成后不显示 #}
+  <div class="actions">
+    {{ ui.copy_button(project.instruction, "继续拆解", primary=true) }}
+    <p class="copy-hint">会复制：<code>{{ project.instruction }}</code>，agent 会从"{{ project.next_step.name }}"接着做</p>
+  </div>
+  {% endif %}
+</div>
+
+{% for step in project.steps %}
+<section class="step-section{{ ' is-done' if step.done else '' }}" id="step-{{ step.number }}" aria-labelledby="step-{{ step.number }}-title">
+  <h2 class="step-heading" id="step-{{ step.number }}-title">
+    <span class="step-no" aria-hidden="true">{{ step.number }}</span>{{ step.name }}
+    {% if step.done %}
+    <span class="badge badge-done">{{ ui.icon("check") }}已完成</span>
+    {% else %}
+    <span class="badge">{{ ui.icon("circle") }}还没做</span>
+    {% endif %}
+  </h2>
+  {% if step.done %}
+  <div class="prose">
+{{ step.html }}
+  </div>
+  {% else %}
+  <div class="empty-step">
+    <p>{{ step.pending_text }}</p>
+    {% if step is sameas project.next_step %}
+    <p>想接着拆，点页面上方的"继续拆解"，把指令粘贴给 agent 就行。</p>
+    {% endif %}
+  </div>
+  {% endif %}
+</section>
+{% endfor %}
+{% endblock %}
+
+{% block scripts %}
+{% if not project.finished %}
+<p class="sr-only" id="copy-status" role="status" aria-live="polite"></p>
+<script src="{{ root }}assets/app.js"></script>
+{% endif %}
+{% if project.has_mermaid %}
+<script src="{{ root }}assets/vendor/mermaid.min.js"></script>
+<script src="{{ root }}assets/diagrams.js"></script>
+{% endif %}
+{% endblock %}

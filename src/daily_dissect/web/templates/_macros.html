@@ -1,0 +1,75 @@
+{# 页面上反复出现的小零件。用法：{% import "_macros.html" as ui %}，再写 ui.icon("check") 这样的调用 #}
+
+{% macro icon(name, cls="icon") -%}
+<svg class="{{ cls }}" aria-hidden="true" focusable="false"><use href="#i-{{ name }}"/></svg>
+{%- endmacro %}
+
+{% macro sample_notice(text="这是示例数据，用来看页面效果。接上真实数据后，这条提示会消失。") -%}
+<p class="notice">
+  {{ icon("info") }}
+  <span>{{ text }}</span>
+</p>
+{%- endmacro %}
+
+{% macro callout(title, lines, kind="info") -%}
+<div class="callout{{ ' callout-danger' if kind == 'danger' else '' }}">
+  {{ icon("x-circle" if kind == "danger" else "info") }}
+  <div>
+    <p class="callout-title">{{ title }}</p>
+    {% for line in lines %}
+    <p>{{ line }}</p>
+    {% endfor %}
+  </div>
+</div>
+{%- endmacro %}
+
+{% macro step_label(step) -%}
+{{ icon("check" if step.done else "circle") }}{{ step.name }}<span class="sr-only">，{{ "已完成" if step.done else "未完成" }}</span>
+{%- endmacro %}
+
+{# 四步进度。linked=true 时每一步都能点，跳到页面上对应的那一步 #}
+{% macro steps(project, linked=false, label="拆解进度") -%}
+<ol class="steps" aria-label="{{ label }}">
+  {% for step in project.steps %}
+  {% if linked %}
+  <li><a class="step{{ ' is-done' if step.done else '' }}" href="#step-{{ step.number }}">{{ step_label(step) }}</a></li>
+  {% else %}
+  <li class="step{{ ' is-done' if step.done else '' }}">{{ step_label(step) }}</li>
+  {% endif %}
+  {% endfor %}
+</ol>
+{%- endmacro %}
+
+{# "开始拆解""继续拆解"按钮：点了把 instruction 复制到剪贴板（app.js 负责） #}
+{% macro copy_button(instruction, label, primary=false) -%}
+<button class="btn{{ ' btn-primary' if primary else '' }}" type="button" data-copy="{{ instruction }}">
+  {{ icon("copy") }}<span class="btn-label">{{ label }}</span>
+</button>
+{%- endmacro %}
+
+{% macro repo_meta(card) -%}
+<p class="repo-meta">
+  {% if card.language %}
+  <span>{{ card.language }}</span>
+  {% endif %}
+  {% if card.stars_text %}
+  <span class="num">{{ icon("star") }}{{ card.stars_text }}<span class="sr-only">颗星</span></span>
+  {% endif %}
+  {% if card.stars_today_text %}
+  <span class="num">{{ card.stars_today_text }}</span>
+  {% endif %}
+</p>
+{%- endmacro %}
+
+{# 没有中文解读时，显示原始简介 #}
+{% macro original_desc(card) -%}
+<p class="original-desc"{% if card.description_lang %} lang="{{ card.description_lang }}"{% endif %}>{{ card.description }}</p>
+{%- endmacro %}
+
+{% macro line_status(ok, name) -%}
+{% if ok %}
+<span class="status-ok">{{ icon("check-circle") }}{{ name }}正常</span>
+{% else %}
+<span class="status-fail">{{ icon("x-circle") }}{{ name }}失败</span>
+{% endif %}
+{%- endmacro %}

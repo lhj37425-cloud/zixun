@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% import "_macros.html" as ui %}
+
+{% block title %}拆解 · 今日一拆{% endblock %}
+
+{% block before_main %}
+{% if projects | selectattr("sample") | list %}
+{{ ui.sample_notice() }}
+{% endif %}
+{% endblock %}
+
+{% block main %}
+<section class="section">
+  <div class="section-head">
+    <h1 class="page-title">拆解</h1>
+    <p class="section-meta">{{ projects | length }} 个项目</p>
+  </div>
+  <p class="page-intro">在今日页点"开始拆解"，把指令粘贴给 Claude Code 或 TRAE。agent 每拆完一步，这里的进度就会更新。</p>
+
+  {% if projects %}
+  <ol class="link-list">
+    {% for project in projects %}
+    <li class="link-card">
+      <div class="link-card-body">
+        <h2 class="link-card-title mono"><a href="{{ root }}projects/{{ project.slug }}.html">{{ project.repo }}</a></h2>
+        {% if project.summary %}
+        <p class="link-card-text clamp-2">{{ project.summary }}</p>
+        {% endif %}
+        <div class="link-card-meta">
+          {{ ui.steps(project) }}
+        </div>
+        <p class="meta link-card-foot">{{ project.started_text }}开始 · 完成 {{ project.done_count }}/4 · {% if project.next_step %}下一步：{{ project.next_step.name }}{% else %}已拆完{% endif %}{% if project.sample %} · 示例项目{% endif %}</p>
+      </div>
+      {{ ui.icon("arrow-right", "icon link-card-arrow") }}
+    </li>
+    {% endfor %}
+  </ol>
+  {% else %}
+  <div class="empty-step">
+    <p>还没有拆过项目。在今日页点"开始拆解"，把指令粘贴给 Claude Code 或 TRAE，就能开始第一个。</p>
+  </div>
+  {% endif %}
+</section>
+{% endblock %}

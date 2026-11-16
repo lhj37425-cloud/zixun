@@ -79,7 +79,7 @@
 **设计规范**（2026-11-16 用 UI/UX Pro Max 审过今日页之后定下，4 个页面和以后的生成器都照这个来）：
 
 - 风格：极简瑞士风。干净、留白、对比清楚，靠字号和排版分层次，不靠装饰。
-- 颜色、字号、间距、圆角都用 `prototype/assets/style.css` 顶部的变量，组件里不直接写颜色；亮色和暗色两套变量一起改。
+- 颜色、字号、间距、圆角都用 `src/daily_dissect/web/static/style.css` 顶部的变量，组件里不直接写颜色；亮色和暗色两套变量一起改。
 - 文字和背景的对比度至少 4.5:1，亮色、暗色都要算过。
 - 手机（768 像素以下）：内容排成一列，按钮和导航至少 44 像素高，不能出现横向滚动。
 - 键盘：焦点框要看得见；页面最前面有"跳到正文"链接。
@@ -136,14 +136,19 @@ daily-dissect/
 ├─ .venv/                  # uv 建的 Python 环境，不提交
 ├─ src/daily_dissect/
 │  ├─ __init__.py          # 版本号（B-3.1，已建）
-│  ├─ cli.py               # 命令入口：dd radar / build / serve / new-project（B-3.1 已建骨架）
+│  ├─ paths.py             # 项目里各个文件夹的位置（B-3.4，已建）
+│  ├─ cli.py               # 命令入口：dd build 已经能用；radar / serve / new-project 后面再加
 │  ├─ projects/            # 项目线：抓取、项目池、打分、挑选（B-4.2）
 │  ├─ news/                # 资讯线：抓取、合并、分栏、挑选（B-4.3）
 │  ├─ llm.py               # 调用 DeepSeek，以及关键词兜底（B-4.5）
-│  └─ web/                 # 网页生成器（B-3.4）
-│     ├─ templates/        # 网页模板
-│     └─ static/           # 样式、脚本、vendor/mermaid.min.js
-├─ tests/                  # 自动化测试；tests/fixtures/ 放样例页面（B-3.1 已建；B-3.2 加了 content/ 的格式检查）
+│  └─ web/                 # 网页生成器（B-3.4，已建）
+│     ├─ content.py        # 读取 content/，整理成页面要用的样子
+│     ├─ markdown.py       # 把拆解文件的 Markdown 转成网页内容
+│     ├─ build.py          # 生成全部页面到 site/
+│     ├─ templates/        # 页面模板：base、_macros、_icons、day、history、projects、project、glossary
+│     └─ static/           # 样式、脚本、图标、vendor/mermaid.min.js（从原型复制过来）
+├─ tests/                  # 自动化测试（B-3.1 建；B-3.2 加了 content/ 格式检查；B-3.4 加了生成器测试）
+│  └─ fixtures/content/    # 测试用的固定示例数据，是 B-3.2 示例数据的副本
 ├─ config/sources.toml     # 信源清单（B-4.1）
 ├─ prompts/
 │  ├─ profile.md           # 你的画像：水平、目标（给模型看）（B-4.4）
@@ -156,16 +161,8 @@ daily-dissect/
 │  └─ glossary.md          # 术语表（B-3.2，已建）
 ├─ data/pool.json          # 项目池（B-4.2）
 ├─ scripts/update.bat      # 双击手动更新（B-6.1）
-├─ prototype/              # 页面原型：手写的 HTML 和 CSS，验收后改成模板（B-3.3，已建）
-│  ├─ index.html           # 今日
-│  ├─ history.html         # 往期列表
-│  ├─ daily/               # 某一天的页面（2026-11-15 演示"资讯线失败、没用 DeepSeek"）
-│  ├─ projects.html        # 拆解列表
-│  ├─ projects/            # 拆解详情（含流程图）
-│  ├─ glossary.html        # 术语表
-│  ├─ favicon.ico          # 浏览器固定会来根目录要这个小图标
-│  └─ assets/              # style.css、app.js、diagrams.js、favicon.svg、vendor/（mermaid.min.js 和它的许可证）
-├─ site/                   # 生成的网页，不提交
+├─ （prototype/ 已删除）     # 手写的页面原型（B-3.3），B-3.4 验收后删掉了；要看可以找 git 提交 e92b35f
+├─ site/                   # dd build 生成的网页，不提交；里面的 .dd-site 是生成器的标记
 ├─ sandbox/                # 拆解时下载的别人的项目，不提交
 └─ logs/                   # 运行记录，不提交
 ```
@@ -334,12 +331,12 @@ enabled = true
 
 ## 7. 运行方式（计划，开发时以实际为准）
 
-目前能用的：`uv sync`、`uv run pytest`、`uv run dd --version`，以及下表里"看页面原型"那条。其余命令在后面的条目里逐个加上。
+目前能用的：`uv sync`、`uv run pytest`、`uv run dd --version`、`uv run dd build`，以及下表里"看生成的网页"那条。其余命令在后面的条目里逐个加上。
 
 | 想做什么 | 命令 |
 |---|---|
 | 安装依赖 | `uv sync` |
-| 看页面原型（B-3.3） | `python -m http.server 8765 --directory prototype`，然后打开 `http://localhost:8765` |
+| 看生成的网页（B-3.4；B-3.5 会换成 `dd serve`） | 先 `uv run dd build`，再 `python -m http.server 8766 --directory site`，然后打开 `http://localhost:8766` |
 | 跑一次每日工作流 | `uv run dd radar` |
 | 只跑项目线或资讯线 | `uv run dd radar --only projects`、`uv run dd radar --only news` |
 | 生成网页 | `uv run dd build` |
@@ -391,3 +388,7 @@ enabled = true
 | 2026-11-16 | 用测试检查 `content/` 的格式（`tests/test_content_format.py`） | 网页和工作流都依赖这个格式；格式一旦写错，测试马上就会发现 |
 | 2026-11-16 | 先手写页面原型（`prototype/`），用户验收后再写网页生成器 | 用户要求先看样子；这时候改样子成本最低，验收过的原型直接改成模板 |
 | 2026-11-16 | 页面按 UI/UX Pro Max 推荐的极简瑞士风优化，规范写在第 3.6 节；没采用它推荐的红色配色、Google 字体和滚动动画 | 用户要求用这个 skill 优化。红色是突发新闻网站的风格，不适合每天安静学习；Google 字体要从国外加载，而且不支持中文；滚动动画对每天阅读没有帮助 |
+| 2026-11-16 | 生成器每次先清空 site/，但只清空带 `.dd-site` 标记的文件夹，否则停下来报错 | 防止 `--out` 指错文件夹时误删用户的文件 |
+| 2026-11-16 | 生成器的测试用 `tests/fixtures/content/` 里固定的一份示例数据 | 以后 content/ 换成真实数据，测试结果也不会跟着变 |
+| 2026-11-16 | "没用上 DeepSeek"的提示写"原始简介"，不写"原始的英文简介"（和原型唯一的文字差别） | HelloGitHub 的项目简介是中文，不能一律说成英文 |
+| 2026-11-16 | B-3.4 验收后删除 `prototype/`（用户同意） | 生成器已经能生成一样的页面；原型和 `web/static/` 各留一份样式，以后改样式容易只改一边。原型留在 git 提交 e92b35f 里，随时能找回 |

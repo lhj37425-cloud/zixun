@@ -1,0 +1,3 @@
+# 统一用 LF 换行，以后搬到 Linux 服务器也不出问题；Windows 的 .bat 脚本保留 CRLF
+* text=auto eol=lf
+*.bat text eol=crlf

@@ -1,0 +1,17 @@
+# 密钥只放在本地，永远不提交
+.env
+
+# Python 环境和缓存
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# 运行时生成的东西，随时能重新生成
+site/
+sandbox/
+logs/
+
+# 系统自动生成的文件
+Thumbs.db
+.DS_Store

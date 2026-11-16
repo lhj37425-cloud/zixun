@@ -25,6 +25,7 @@
 - 已安装：Python 3.14.7、uv 0.11.33、Git 2.55.0、Node.js 24.21.0（本项目暂时不用 Node）
 - 项目位置：`D:\GitHub 项目\daily-dissect`
 - 网络：GitHub 网站在用户的网络下打开偏慢，但用程序抓取 Trending 页面约 3 秒就能完成
+- 依赖：B-3.1 实际装上的版本都记在 `uv.lock` 里，比如 httpx 0.28.1、feedparser 6.0.14、beautifulsoup4 4.15.0、jinja2 3.1.6、markdown-it-py 4.3.0、python-dotenv 1.2.4、pytest 9.2.0
 
 ## 3. 整体架构
 
@@ -103,18 +104,23 @@ daily-dissect/
 
 ```
 daily-dissect/
-├─ pyproject.toml          # Python 项目配置和依赖（B-3.1）
-├─ .env.example            # 只写变量名（B-3.1）
-├─ .gitignore              # 不提交 .env、.venv/、site/、sandbox/、logs/（B-3.1）
+├─ pyproject.toml          # Python 项目配置和依赖（B-3.1，已建）
+├─ uv.lock                 # uv 记下的确切依赖版本，要提交（B-3.1，已建）
+├─ .python-version         # 指定用 Python 3.14（B-3.1，已建）
+├─ .env.example            # 只写变量名（B-3.1，已建）
+├─ .gitignore              # 不提交 .env、.venv/、site/、sandbox/、logs/（B-3.1，已建）
+├─ .gitattributes          # 换行符规则：普通文件用 LF，.bat 用 CRLF（B-3.1，已建）
+├─ .venv/                  # uv 建的 Python 环境，不提交
 ├─ src/daily_dissect/
-│  ├─ cli.py               # 命令入口：dd radar / build / serve / new-project
+│  ├─ __init__.py          # 版本号（B-3.1，已建）
+│  ├─ cli.py               # 命令入口：dd radar / build / serve / new-project（B-3.1 已建骨架）
 │  ├─ projects/            # 项目线：抓取、项目池、打分、挑选（B-4.2）
 │  ├─ news/                # 资讯线：抓取、合并、分栏、挑选（B-4.3）
 │  ├─ llm.py               # 调用 DeepSeek，以及关键词兜底（B-4.5）
 │  └─ web/                 # 网页生成器（B-3.3）
 │     ├─ templates/        # 网页模板
 │     └─ static/           # 样式、脚本、vendor/mermaid.min.js
-├─ tests/                  # 自动化测试；tests/fixtures/ 放样例页面
+├─ tests/                  # 自动化测试；tests/fixtures/ 放样例页面（B-3.1 已建，含冒烟测试）
 ├─ config/sources.toml     # 信源清单（B-4.1）
 ├─ prompts/
 │  ├─ profile.md           # 你的画像：水平、目标（给模型看）（B-4.4）
@@ -295,6 +301,8 @@ enabled = true
 
 ## 7. 运行方式（计划，开发时以实际为准）
 
+目前能用的：`uv sync`、`uv run pytest`、`uv run dd --version`。其余命令在后面的条目里逐个加上。
+
 | 想做什么 | 命令 |
 |---|---|
 | 安装依赖 | `uv sync` |
@@ -341,3 +349,7 @@ enabled = true
 | 2026-11-13 | 定时用 Windows 任务计划程序 | 系统自带，支持错过时间后补跑 |
 | 2026-11-13 | 文件名用英文 | 避免不同工具处理中文文件名时出问题 |
 | 2026-11-13 | 你的画像放在 `prompts/profile.md`，不放在 `docs/` | 它是给模型和 agent 看的产品配置，不是开发文档 |
+| 2026-11-13 | 用 git 在本地记录版本，不上传 | 用户同意；每一条验收通过后提交一次，出问题能退回，换 agent 也能看到改了什么 |
+| 2026-11-13 | 依赖的确切版本记在 `uv.lock` 里并提交 | 换电脑或者换 agent 时，装出来的版本一样 |
+| 2026-11-13 | 换行符统一用 LF，`.bat` 保留 CRLF | 以后搬到 Linux 服务器时文件不出问题；`.bat` 在 Windows 上需要 CRLF |
+| 2026-11-13 | uv 安装时直接复制文件（`link-mode = "copy"`） | uv 的缓存在 C 盘、项目在 D 盘，跨盘不能用硬链接；这样设置后每次安装不再弹警告 |

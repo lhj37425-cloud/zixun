@@ -13,8 +13,8 @@
 
 ## 第 3 步：用示例数据做出 4 个页面
 
-- **B-3.1 建 Python 项目骨架** · P0 · 待开始
-  - 做什么：`pyproject.toml`、`src/daily_dissect/`、`tests/`、`.env.example`、`.gitignore`；开始前跟用户确认是否用 git。
+- **B-3.1 建 Python 项目骨架** · P0 · 已完成（2026-11-16 验收通过）
+  - 做什么：`pyproject.toml`、`src/daily_dissect/`、`tests/`、`.env.example`、`.gitignore`。用户已确认在本地用 git。
   - 验收：`uv sync` 成功；`uv run pytest` 能运行；`.env` 被 `.gitignore` 忽略。
 - **B-3.2 准备示例数据** · P0 · 待开始
   - 做什么：2 天的今日数据、1 个拆了两步的示例项目（带一张 Mermaid 流程图）、几个术语。所有示例都标明"示例"。

@@ -1,22 +1,28 @@
-"""跑一次每日工作流：抓取 → 挑选 → 写入今日数据。"""
+"""跑一次每日工作流：两条线同时抓取，互不影响，再挑选写入今日数据。"""
 
 from __future__ import annotations
 
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from dataclasses import dataclass
 from datetime import date
 from pathlib import Path
+from typing import Callable
 
 from daily_dissect.llm.client import DeepSeekClient, LLMClient
 from daily_dissect.llm.config import LLMConfig
 from daily_dissect.news.collect import collect_news
+from daily_dissect.news.models import NewsItem
 from daily_dissect.paths import CONTENT_DIR, POOL_FILE
 from daily_dissect.projects.fetch import fetch_hellogithub_issue, fetch_trending_html
-from daily_dissect.projects.pool import load_pool, save_pool
+from daily_dissect.projects.pool import ProjectPool, load_pool, save_pool
 from daily_dissect.projects.sync import ingest_hellogithub, ingest_trending
 from daily_dissect.radar.build import build_daily, save_daily
-from daily_dissect.sources import load_sources
+from daily_dissect.sources import Sources, load_sources
 
 _MISSING = object()
+
+ProjectsFetcher = Callable[[ProjectPool, Sources, date | None], str | None]
+NewsFetcher = Callable[[Sources], tuple[list[NewsItem], str | None]]
 
 
 @dataclass
@@ -35,6 +41,47 @@ def _make_client() -> LLMClient | None:
     return DeepSeekClient(config)
 
 
+def fetch_projects_line(
+    pool: ProjectPool,
+    sources: Sources,
+    today: date | None = None,
+) -> str | None:
+    """抓取项目线。成功返回 None，失败返回原因（不抛给外层）。"""
+    try:
+        trending_src = next(p for p in sources.projects if p.key == "github_trending")
+        hello_src = next(p for p in sources.projects if p.key == "hellogithub")
+        if trending_src.enabled:
+            html = fetch_trending_html(trending_src)
+            ingest_trending(pool, html, today=today)
+        if hello_src.enabled:
+            volume, markdown = fetch_hellogithub_issue(hello_src)
+            ingest_hellogithub(
+                pool,
+                volume=volume,
+                markdown=markdown,
+                skip_sections=hello_src.skip_sections or ("开源书籍",),
+                today=today,
+            )
+        pool.expire_stale(today=today)
+        return None
+    except Exception as error:
+        return str(error) or error.__class__.__name__
+
+
+def fetch_news_line(sources: Sources) -> tuple[list[NewsItem], str | None]:
+    """抓取资讯线。单个源失败不影响整条线；全部失败才记错误。"""
+    try:
+        fetched = collect_news(sources.news)
+        items = list(fetched.items)
+        enabled = [s for s in sources.news if s.enabled]
+        if enabled and not items and len(fetched.failures) >= len(enabled):
+            reason = "；".join(f"{f.source}: {f.error}" for f in fetched.failures)
+            return [], reason
+        return items, None
+    except Exception as error:
+        return [], str(error) or error.__class__.__name__
+
+
 def run_radar(
     *,
     only: str | None = None,
@@ -42,10 +89,13 @@ def run_radar(
     today: date | None = None,
     content_dir: Path | None = None,
     pool_path: Path | None = None,
+    projects_fetcher: ProjectsFetcher | None = None,
+    news_fetcher: NewsFetcher | None = None,
 ) -> RadarReport:
-    """only: None 表示两条线都跑；'projects' / 'news' 只跑一条。
+    """两条线默认同时跑。only='projects'|'news' 时只跑一条。
 
-    client 默认按 .env 决定；显式传 None 表示强制关键词兜底。
+    client 默认按 .env；显式传 None 表示强制关键词兜底。
+    测试可注入 projects_fetcher / news_fetcher。
     """
     root = content_dir or CONTENT_DIR
     projects_dir = root / "projects"
@@ -59,46 +109,29 @@ def run_radar(
         llm_client = client  # type: ignore[assignment]
 
     pool = load_pool(pool_file)
-    projects_error: str | None = None
-    news_error: str | None = None
-    news_items = []
+    fetch_projects = projects_fetcher or fetch_projects_line
+    fetch_news = news_fetcher or fetch_news_line
 
     run_projects = only in (None, "projects")
     run_news = only in (None, "news")
 
-    if run_projects:
-        try:
-            trending_src = next(p for p in sources.projects if p.key == "github_trending")
-            hello_src = next(p for p in sources.projects if p.key == "hellogithub")
-            if trending_src.enabled:
-                html = fetch_trending_html(trending_src)
-                ingest_trending(pool, html, today=today)
-            if hello_src.enabled:
-                volume, markdown = fetch_hellogithub_issue(hello_src)
-                ingest_hellogithub(
-                    pool,
-                    volume=volume,
-                    markdown=markdown,
-                    skip_sections=hello_src.skip_sections or ("开源书籍",),
-                    today=today,
-                )
-            pool.expire_stale(today=today)
-        except Exception as error:
-            projects_error = str(error) or error.__class__.__name__
-    else:
-        projects_error = "本次只跑了资讯线"
+    projects_error: str | None = None
+    news_error: str | None = None
+    news_items: list[NewsItem] = []
 
-    if run_news:
-        try:
-            fetched = collect_news(sources.news)
-            news_items = list(fetched.items)
-            enabled = [s for s in sources.news if s.enabled]
-            if enabled and not news_items and len(fetched.failures) >= len(enabled):
-                news_error = "；".join(f"{f.source}: {f.error}" for f in fetched.failures)
-        except Exception as error:
-            news_error = str(error) or error.__class__.__name__
-    else:
+    if run_projects and run_news:
+        # 同时运行：一条线卡住或失败，不耽误另一条出结果
+        with ThreadPoolExecutor(max_workers=2) as pool_exec:
+            fut_projects = pool_exec.submit(fetch_projects, pool, sources, today)
+            fut_news = pool_exec.submit(fetch_news, sources)
+            projects_error = fut_projects.result()
+            news_items, news_error = fut_news.result()
+    elif run_projects:
+        projects_error = fetch_projects(pool, sources, today)
         news_error = "本次只跑了项目线"
+    elif run_news:
+        news_items, news_error = fetch_news(sources)
+        projects_error = "本次只跑了资讯线"
 
     document = build_daily(
         pool=pool,

@@ -4,9 +4,9 @@
 
 ## 下一步（下一个 agent 从这里开始）
 
-- **现在**：B-4.6 已验收通过并提交。下一步是 **B-4.7 两条线同时运行、互不影响**。开始前先问用户，等用户明确说"开始"。
+- **现在**：B-4.7 已验收通过并提交。下一步是 **B-4.8 清理示例数据**。开始前先问用户，等用户明确说"开始"。
 - **看网页**：`uv run dd open`；或者直接双击 `site/index.html`。
-- **相关文档**：`docs/TECH.md` 第 3.4 节；`uv run dd radar`。
+- **相关文档**：`BACKLOG.md` B-4.8；`content/` 里带 `sample: true` 的数据。
 
 ## 进行中
 
@@ -41,3 +41,4 @@
 | 2026-11-17 | B-4.4 写给模型的说明（用户验收通过） | `prompts/profile.md`、`score-projects.md`、`score-news.md`；`load_prompt`；`uv run pytest`：44 passed。提交说明"B-4.4 写给模型的说明" |
 | 2026-11-17 | B-4.5 调用 DeepSeek 和关键词兜底（用户验收通过） | `llm/` 三次调用 + 关键词兜底 + 假模型；`prompts/write.md`；`uv run pytest`：50 passed。提交说明"B-4.5 调用 DeepSeek 和关键词兜底" |
 | 2026-11-17 | B-4.6 挑选并写入今日数据（用户验收通过） | `radar/` + `dd radar`；F1/F2 挑选与写入；`uv run pytest`：54 passed。提交说明"B-4.6 挑选并写入今日数据" |
+| 2026-11-17 | B-4.7 两条线同时运行、互不影响（用户验收通过） | 线程池并行抓取；失败隔离；页面提示测试；`uv run pytest`：57 passed。提交说明"B-4.7 两条线同时运行、互不影响" |

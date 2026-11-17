@@ -13,6 +13,8 @@ CONTENT_DIR = ROOT / "content"
 SITE_DIR = ROOT / "site"
 CONFIG_DIR = ROOT / "config"
 SOURCES_FILE = CONFIG_DIR / "sources.toml"
+DATA_DIR = ROOT / "data"
+POOL_FILE = DATA_DIR / "pool.json"
 
 WEB_DIR = PACKAGE_DIR / "web"
 TEMPLATES_DIR = WEB_DIR / "templates"

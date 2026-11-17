@@ -11,6 +11,7 @@ __pycache__/
 site/
 sandbox/
 logs/
+data/pool.json
 
 # 系统自动生成的文件
 Thumbs.db

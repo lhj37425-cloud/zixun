@@ -139,7 +139,13 @@ daily-dissect/
 │  ├─ __init__.py          # 版本号（B-3.1，已建）
 │  ├─ paths.py             # 项目里各个文件夹的位置（B-3.4，已建）
 │  ├─ cli.py               # 命令入口：dd build、dd open 已经能用；radar / new-project 后面再加
-│  ├─ projects/            # 项目线：抓取、项目池、打分、挑选（B-4.2）
+│  ├─ sources.py           # 读取 config/sources.toml（B-4.1，已建）
+│  ├─ projects/            # 项目线：解析 Trending/HelloGitHub、项目池（B-4.2，已建；打分挑选在后面）
+│  │  ├─ trending.py       # 解析 Trending HTML
+│  │  ├─ hellogithub.py    # 解析 RSS 期号和某一期 Markdown
+│  │  ├─ pool.py           # data/pool.json 读写、去重、30 天过期
+│  │  ├─ sync.py           # 把解析结果写进项目池
+│  │  └─ fetch.py          # 真正发请求抓网页（radar 时用）
 │  ├─ news/                # 资讯线：抓取、合并、分栏、挑选（B-4.3）
 │  ├─ llm.py               # 调用 DeepSeek，以及关键词兜底（B-4.5）
 │  └─ web/                 # 网页生成器（B-3.4，已建）
@@ -148,9 +154,11 @@ daily-dissect/
 │     ├─ build.py          # 生成全部页面到 site/
 │     ├─ templates/        # 页面模板：base、_macros、_icons、day、history、projects、project、glossary
 │     └─ static/           # 样式、脚本、图标、vendor/mermaid.min.js（从原型复制过来）
-├─ tests/                  # 自动化测试（B-3.1 建；B-3.2 加了 content/ 格式检查；B-3.4 加了生成器测试）
-│  └─ fixtures/content/    # 测试用的固定示例数据，是 B-3.2 示例数据的副本
-├─ config/sources.toml     # 信源清单（B-4.1）
+├─ tests/                  # 自动化测试
+│  └─ fixtures/
+│     ├─ content/          # 网页生成器用的固定示例数据
+│     └─ projects/         # Trending / HelloGitHub 样例页面（B-4.2）
+├─ config/sources.toml     # 信源清单（B-4.1，已建）
 ├─ prompts/
 │  ├─ profile.md           # 你的画像：水平、目标（给模型看）（B-4.4）
 │  ├─ score-projects.md    # 项目线打分标准（B-4.4）

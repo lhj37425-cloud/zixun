@@ -282,12 +282,16 @@ daily-dissect/
 
 ### 5.5 信源清单：`config/sources.toml`
 
+完整清单在仓库里的 `config/sources.toml`（B-4.1）。`projects.*` 是项目线，`[[news]]` 是资讯线。增删或开关某个源，只改这个文件。程序用 `daily_dissect.sources.load_sources` 读取。
+
 ```toml
 [projects.github_trending]
+name = "GitHub Trending"
 enabled = true
 url = "https://github.com/trending?since=daily"
 
 [projects.hellogithub]
+name = "HelloGitHub"
 enabled = true
 rss = "https://hellogithub.com/rss"
 issue_url = "https://raw.githubusercontent.com/521xueweihan/HelloGitHub/HEAD/content/HelloGitHub{volume}.md"
@@ -298,7 +302,7 @@ name = "量子位"
 url = "https://www.qbitai.com/feed"
 enabled = true
 
-# 其余 10 个资讯源按同样格式往下写，见第 6 节
+# 其余 10 个资讯源同样格式，地址见第 6 节
 ```
 
 ## 6. 外部接口（2026-11-13 实测）

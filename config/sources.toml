@@ -1,0 +1,69 @@
+# 信源清单：改这里就能增删源，不用改代码。
+# projects.* = 项目线；[[news]] = 资讯线。
+
+[projects.github_trending]
+name = "GitHub Trending"
+enabled = true
+url = "https://github.com/trending?since=daily"
+
+[projects.hellogithub]
+name = "HelloGitHub"
+enabled = true
+rss = "https://hellogithub.com/rss"
+issue_url = "https://raw.githubusercontent.com/521xueweihan/HelloGitHub/HEAD/content/HelloGitHub{volume}.md"
+skip_sections = ["开源书籍"]
+
+[[news]]
+name = "量子位"
+url = "https://www.qbitai.com/feed"
+enabled = true
+
+[[news]]
+name = "InfoQ 中文"
+url = "https://www.infoq.cn/feed"
+enabled = true
+
+[[news]]
+name = "OpenAI"
+url = "https://openai.com/news/rss.xml"
+enabled = true
+
+[[news]]
+name = "Google AI"
+url = "https://blog.google/technology/ai/rss/"
+enabled = true
+
+[[news]]
+name = "Hugging Face"
+url = "https://huggingface.co/blog/feed.xml"
+enabled = true
+
+[[news]]
+name = "Simon Willison"
+url = "https://simonwillison.net/atom/everything/"
+enabled = true
+
+[[news]]
+name = "Latent Space"
+url = "https://www.latent.space/feed"
+enabled = true
+
+[[news]]
+name = "smol.ai AI News"
+url = "https://news.smol.ai/rss.xml"
+enabled = true
+
+[[news]]
+name = "Hacker News（100 分以上）"
+url = "https://hnrss.org/frontpage?points=100"
+enabled = true
+
+[[news]]
+name = "GitHub 博客"
+url = "https://github.blog/feed/"
+enabled = true
+
+[[news]]
+name = "爱范儿"
+url = "https://www.ifanr.com/feed"
+enabled = true

@@ -11,6 +11,8 @@ ROOT = Path(os.environ.get("DD_ROOT") or PACKAGE_DIR.parents[1])
 
 CONTENT_DIR = ROOT / "content"
 SITE_DIR = ROOT / "site"
+CONFIG_DIR = ROOT / "config"
+SOURCES_FILE = CONFIG_DIR / "sources.toml"
 
 WEB_DIR = PACKAGE_DIR / "web"
 TEMPLATES_DIR = WEB_DIR / "templates"

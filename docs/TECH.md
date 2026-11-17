@@ -146,7 +146,10 @@ daily-dissect/
 │  │  ├─ pool.py           # data/pool.json 读写、去重、30 天过期
 │  │  ├─ sync.py           # 把解析结果写进项目池
 │  │  └─ fetch.py          # 真正发请求抓网页（radar 时用）
-│  ├─ news/                # 资讯线：抓取、合并、分栏、挑选（B-4.3）
+│  ├─ news/                # 资讯线：RSS 抓取、24 小时过滤、去重（B-4.3，已建；合并分栏在后面）
+│  │  ├─ parse.py          # 解析 RSS/Atom，过滤与去重
+│  │  ├─ fetch.py          # 单个源抓取（超时 20 秒）
+│  │  └─ collect.py        # 汇总全部源，记录失败原因
 │  ├─ llm.py               # 调用 DeepSeek，以及关键词兜底（B-4.5）
 │  └─ web/                 # 网页生成器（B-3.4，已建）
 │     ├─ content.py        # 读取 content/，整理成页面要用的样子
@@ -157,7 +160,8 @@ daily-dissect/
 ├─ tests/                  # 自动化测试
 │  └─ fixtures/
 │     ├─ content/          # 网页生成器用的固定示例数据
-│     └─ projects/         # Trending / HelloGitHub 样例页面（B-4.2）
+│     ├─ projects/         # Trending / HelloGitHub 样例页面（B-4.2）
+│     └─ news/             # RSS/Atom 样例（B-4.3）
 ├─ config/sources.toml     # 信源清单（B-4.1，已建）
 ├─ prompts/
 │  ├─ profile.md           # 你的画像：水平、目标（给模型看）（B-4.4）

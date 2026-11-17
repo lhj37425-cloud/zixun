@@ -3,7 +3,8 @@
 现在能用的命令：
 - build：根据 content/ 生成网页，放到 site/
 - open：生成网页，再用浏览器打开今日页（平时直接双击 site/index.html 也一样）
-其余命令（radar、new-project）在后面的 BACKLOG 条目里逐个加上，见 docs/TECH.md 第 7 节。
+- radar：跑一次每日工作流，挑选并写入今日数据
+其余命令（new-project）在后面的 BACKLOG 条目里逐个加上，见 docs/TECH.md 第 7 节。
 """
 
 import argparse
@@ -26,6 +27,13 @@ def build_parser() -> argparse.ArgumentParser:
 
     open_cmd = commands.add_parser("open", help="生成网页，再用浏览器打开今日页")
     open_cmd.add_argument("--out", help="生成到哪个文件夹，默认是项目里的 site/")
+
+    radar = commands.add_parser("radar", help="跑一次每日工作流，写入今日数据")
+    radar.add_argument(
+        "--only",
+        choices=("projects", "news"),
+        help="只跑项目线或资讯线",
+    )
     return parser
 
 
@@ -60,6 +68,28 @@ def run_open(out: str | None) -> int:
     return 0
 
 
+def run_radar(only: str | None) -> int:
+    from daily_dissect.radar.run import run_radar as do_radar
+
+    report = do_radar(only=only)
+    print(f"今日数据已写入：{report.daily_path}")
+    print(f"项目池已更新：{report.pool_path}")
+    print(
+        "项目线："
+        + ("正常" if report.projects_ok else f"失败（{report.document['projects'].get('error')}）")
+    )
+    print(
+        "资讯线："
+        + ("正常" if report.news_ok else f"失败（{report.document['news'].get('error')}）")
+    )
+    llm = report.document.get("llm") or {}
+    if llm.get("used"):
+        print(f"DeepSeek：调用 {llm.get('calls')} 次（{llm.get('model')}）")
+    else:
+        print("DeepSeek：未使用（关键词兜底，页面会标没生成解读）")
+    return 0 if report.projects_ok or report.news_ok else 1
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = build_parser()
     args = parser.parse_args(argv)
@@ -67,6 +97,8 @@ def main(argv: list[str] | None = None) -> int:
         return run_build(args.out)
     if args.command == "open":
         return run_open(args.out)
+    if args.command == "radar":
+        return run_radar(args.only)
     parser.print_help()
     return 0
 

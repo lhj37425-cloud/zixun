@@ -138,7 +138,7 @@ daily-dissect/
 ├─ src/daily_dissect/
 │  ├─ __init__.py          # 版本号（B-3.1，已建）
 │  ├─ paths.py             # 项目里各个文件夹的位置（B-3.4，已建）
-│  ├─ cli.py               # 命令入口：dd build、dd open 已经能用；radar / new-project 后面再加
+│  ├─ cli.py               # 命令入口：dd build、dd open、dd radar 已能用；new-project 后面再加
 │  ├─ sources.py           # 读取 config/sources.toml（B-4.1，已建）
 │  ├─ projects/            # 项目线：解析 Trending/HelloGitHub、项目池（B-4.2，已建；打分挑选在后面）
 │  │  ├─ trending.py       # 解析 Trending HTML
@@ -155,6 +155,10 @@ daily-dissect/
 │  │  ├─ client.py         # DeepSeek 客户端 + 测试用假模型
 │  │  ├─ fallback.py       # 关键词打分；说明字段留空
 │  │  └─ pipeline.py       # 每天固定 3 次调用的编排
+│  ├─ radar/               # 每日工作流：挑选并写入今日数据（B-4.6，已建）
+│  │  ├─ select.py         # 排除已主推/已拆解；挑前 3 项目、最多 5 条资讯
+│  │  ├─ build.py          # 拼今日 JSON
+│  │  └─ run.py            # 抓取 + 挑选 + 写盘（dd radar）
 │  └─ web/                 # 网页生成器（B-3.4，已建）
 │     ├─ content.py        # 读取 content/，整理成页面要用的样子
 │     ├─ markdown.py       # 把拆解文件的 Markdown 转成网页内容

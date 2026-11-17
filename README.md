@@ -28,7 +28,7 @@
 
 - 每天 9 点自动更新，不用管；那时电脑没开，开机后会补跑。
 - 想手动更新，双击 `scripts/` 里的更新脚本。
-- 在浏览器里打开本地网页；手机连同一个 Wi-Fi 也能看。
+- 在电脑浏览器里看：直接双击 `site/index.html`，或者运行 `uv run dd open`。手机上看以后再做。
 
 ## 开发环境
 
@@ -48,6 +48,12 @@ uv run pytest
 
 ```bash
 uv run dd build
+```
+
+生成网页，再用浏览器打开今日页：
+
+```bash
+uv run dd open
 ```
 
 ## 换一个 agent 接着做

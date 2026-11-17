@@ -15,6 +15,7 @@ CONFIG_DIR = ROOT / "config"
 SOURCES_FILE = CONFIG_DIR / "sources.toml"
 DATA_DIR = ROOT / "data"
 POOL_FILE = DATA_DIR / "pool.json"
+PROMPTS_DIR = ROOT / "prompts"
 
 WEB_DIR = PACKAGE_DIR / "web"
 TEMPLATES_DIR = WEB_DIR / "templates"

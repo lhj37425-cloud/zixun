@@ -164,9 +164,9 @@ daily-dissect/
 │     └─ news/             # RSS/Atom 样例（B-4.3）
 ├─ config/sources.toml     # 信源清单（B-4.1，已建）
 ├─ prompts/
-│  ├─ profile.md           # 你的画像：水平、目标（给模型看）（B-4.4）
-│  ├─ score-projects.md    # 项目线打分标准（B-4.4）
-│  ├─ score-news.md        # 资讯线打分和分栏标准（B-4.4）
+│  ├─ profile.md           # 你的画像：水平、目标（给模型看）（B-4.4，已建）
+│  ├─ score-projects.md    # 项目线打分标准（B-4.4，已建）
+│  ├─ score-news.md        # 资讯线打分和分栏标准（B-4.4，已建）
 │  └─ dissect.md           # 拆解四步法（B-5.1）
 ├─ content/
 │  ├─ daily/               # 每天一份今日数据（B-3.2，已放示例）

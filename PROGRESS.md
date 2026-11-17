@@ -4,9 +4,9 @@
 
 ## 下一步（下一个 agent 从这里开始）
 
-- **现在**：B-4.3 已验收通过并提交。下一步是 **B-4.4 写给模型的说明**（`prompts/profile.md`、`score-projects.md`、`score-news.md`）。开始前先问用户，等用户明确说"开始"。
+- **现在**：B-4.4 已验收通过并提交。下一步是 **B-4.5 调用 DeepSeek 和关键词兜底**。开始前先问用户，等用户明确说"开始"。
 - **看网页**：`uv run dd open`；或者直接双击 `site/index.html`。
-- **相关文档**：`docs/PRD.md` 的 F1/F2；`docs/TECH.md` 第 3.1–3.3 节。
+- **相关文档**：`docs/TECH.md` 第 3.5、8 节；`prompts/`。
 
 ## 进行中
 
@@ -38,3 +38,4 @@
 | 2026-11-17 | B-4.1 信源清单（用户验收通过） | `config/sources.toml`：项目线 2 + 资讯线 11；`load_sources` 只读配置；`uv run pytest`：29 passed。提交说明"B-4.1 信源清单" |
 | 2026-11-17 | B-4.2 项目线：抓取和项目池（用户验收通过） | 解析 Trending/HelloGitHub，维护 `data/pool.json`；夹具测试；`uv run pytest`：35 passed。提交说明"B-4.2 项目线：抓取和项目池" |
 | 2026-11-17 | B-4.3 资讯线：抓取（用户验收通过） | RSS/Atom 抓取、24 小时过滤、去重、单源失败隔离；`uv run pytest`：39 passed。提交说明"B-4.3 资讯线：抓取" |
+| 2026-11-17 | B-4.4 写给模型的说明（用户验收通过） | `prompts/profile.md`、`score-projects.md`、`score-news.md`；`load_prompt`；`uv run pytest`：44 passed。提交说明"B-4.4 写给模型的说明" |

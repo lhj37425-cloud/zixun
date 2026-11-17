@@ -150,7 +150,11 @@ daily-dissect/
 │  │  ├─ parse.py          # 解析 RSS/Atom，过滤与去重
 │  │  ├─ fetch.py          # 单个源抓取（超时 20 秒）
 │  │  └─ collect.py        # 汇总全部源，记录失败原因
-│  ├─ llm.py               # 调用 DeepSeek，以及关键词兜底（B-4.5）
+│  ├─ prompts.py           # 读取 prompts/ 说明文件（B-4.4，已建）
+│  ├─ llm/                 # 调用 DeepSeek，以及关键词兜底（B-4.5，已建）
+│  │  ├─ client.py         # DeepSeek 客户端 + 测试用假模型
+│  │  ├─ fallback.py       # 关键词打分；说明字段留空
+│  │  └─ pipeline.py       # 每天固定 3 次调用的编排
 │  └─ web/                 # 网页生成器（B-3.4，已建）
 │     ├─ content.py        # 读取 content/，整理成页面要用的样子
 │     ├─ markdown.py       # 把拆解文件的 Markdown 转成网页内容
@@ -167,6 +171,7 @@ daily-dissect/
 │  ├─ profile.md           # 你的画像：水平、目标（给模型看）（B-4.4，已建）
 │  ├─ score-projects.md    # 项目线打分标准（B-4.4，已建）
 │  ├─ score-news.md        # 资讯线打分和分栏标准（B-4.4，已建）
+│  ├─ write.md             # 给入选项目/资讯写说明（B-4.5，已建）
 │  └─ dissect.md           # 拆解四步法（B-5.1）
 ├─ content/
 │  ├─ daily/               # 每天一份今日数据（B-3.2，已放示例）

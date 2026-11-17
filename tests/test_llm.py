@@ -1,10 +1,11 @@
 """B-4.5：DeepSeek 三次调用 + 关键词兜底 + 假模型。"""
 
+from pathlib import Path
+
 from daily_dissect.llm.client import FakeLLMClient, LLMError
 from daily_dissect.llm.config import LLMConfig
 from daily_dissect.llm.fallback import score_projects_by_keywords
 from daily_dissect.llm.pipeline import run_day_llm
-from daily_dissect.paths import CONTENT_DIR
 from daily_dissect.web.content import load_days, load_projects
 
 
@@ -157,9 +158,10 @@ def test_keyword_scoring_boosts_agent_words():
 
 
 def test_page_marks_no_insight_when_llm_not_used():
-    """已有示例日 2026-11-15：llm.used=false，页面应带「没生成解读」。"""
-    projects = load_projects(CONTENT_DIR / "projects")
-    days = {d.date.isoformat(): d for d in load_days(CONTENT_DIR / "daily", projects)}
+    """夹具日 2026-11-15：llm.used=false，页面应带「没生成解读」。"""
+    fixture = Path(__file__).resolve().parent / "fixtures" / "content"
+    projects = load_projects(fixture / "projects")
+    days = {d.date.isoformat(): d for d in load_days(fixture / "daily", projects)}
     day = days["2026-11-15"]
     assert day.llm_used is False
     assert any(b.text == "没生成解读" for b in day.history_badges)

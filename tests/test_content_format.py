@@ -51,12 +51,18 @@ def project_folders() -> list[Path]:
     return sorted(p for p in folder.iterdir() if p.is_dir())
 
 
-def test_there_is_daily_data():
-    assert daily_files(), "content/daily/ 里至少要有一份今日数据"
+def test_daily_data_absent_or_present_is_ok():
+    """B-4.8 清掉示例后，真实 radar 跑之前允许暂时没有今日数据。"""
+    files = daily_files()
+    if not files:
+        pytest.skip("还没有今日数据（示例已清理，等真实 radar）")
+    assert files
 
 
-@pytest.mark.parametrize("path", daily_files(), ids=lambda p: p.name)
+@pytest.mark.parametrize("path", daily_files() or [None], ids=lambda p: getattr(p, "name", "none"))
 def test_daily_file_follows_format(path: Path):
+    if path is None:
+        pytest.skip("还没有今日数据")
     data = load_json(path)
     assert data["date"] == path.stem, "文件名必须是当天的日期"
     assert isinstance(data.get("sample", False), bool)
@@ -100,8 +106,10 @@ def test_daily_file_follows_format(path: Path):
         assert news["items"] == []
 
 
-@pytest.mark.parametrize("folder", project_folders(), ids=lambda p: p.name)
+@pytest.mark.parametrize("folder", project_folders() or [None], ids=lambda p: getattr(p, "name", "none"))
 def test_project_folder_follows_format(folder: Path):
+    if folder is None:
+        pytest.skip("还没有拆解项目")
     meta = load_json(folder / "meta.json")
     assert {"repo", "url", "started"} <= set(meta)
     assert folder.name == slug_of(meta["repo"]), "文件夹名必须是仓库名转成的 slug"
@@ -127,3 +135,17 @@ def test_glossary_entries_have_first_seen_line():
         term, _, body = entry.partition("\n")
         assert term.strip(), "术语名不能为空"
         assert "- 第一次出现：" in body, f"术语「{term.strip()}」缺少“第一次出现”那一行"
+        assert "示例项目" not in body and "（示例）" not in body, (
+            f"术语「{term.strip()}」还在指向示例数据"
+        )
+
+
+def test_content_has_no_sample_flag():
+    """B-4.8：content/ 里不应再有 sample: true 的今日数据或示例项目。"""
+    for path in daily_files():
+        data = load_json(path)
+        assert data.get("sample") is not True, f"{path.name} 仍是示例数据"
+    for folder in project_folders():
+        meta = load_json(folder / "meta.json")
+        assert meta.get("sample") is not True, f"{folder.name} 仍是示例项目"
+    assert not SAMPLE_PROJECT.exists()

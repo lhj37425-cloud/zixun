@@ -154,7 +154,11 @@ def build_daily(
             eligible = eligible_candidates(pool, projects_dir=projects_dir)
             payloads = [_project_payload(entry) for entry in eligible]
             if client is not None and payloads:
-                scores = score_projects_with_llm(client, payloads)
+                try:
+                    scores = score_projects_with_llm(client, payloads)
+                except LLMError:
+                    # 模型失败不整线报废，改用关键词兜底（TECH 3.5）
+                    scores = score_projects_by_keywords(payloads)
             else:
                 scores = score_projects_by_keywords(payloads) if payloads else []
             ranked = rank_projects(eligible, scores)
@@ -165,8 +169,7 @@ def build_daily(
                 "pick": None,
                 "alternates": [],
             }
-        except (LLMError, Exception) as error:
-            # 打分失败时项目线记失败；资讯线仍可继续
+        except Exception as error:
             projects_block = {
                 "status": "failed",
                 "error": str(error) or error.__class__.__name__,
@@ -183,12 +186,15 @@ def build_daily(
         try:
             payloads = _news_payload(news_items)
             if client is not None and payloads:
-                groups = score_news_with_llm(client, payloads)
+                try:
+                    groups = score_news_with_llm(client, payloads)
+                except LLMError:
+                    groups = score_news_by_keywords(payloads)
             else:
                 groups = score_news_by_keywords(payloads) if payloads else []
             selected_news = pick_news(groups, _items_by_id(news_items), limit=5, max_per_category=2)
             news_block = {"status": "ok", "error": None, "items": []}
-        except (LLMError, Exception) as error:
+        except Exception as error:
             news_block = {
                 "status": "failed",
                 "error": str(error) or error.__class__.__name__,

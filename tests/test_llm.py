@@ -140,11 +140,26 @@ def test_llm_failure_falls_back_and_flow_continues():
     assert result.project_blurbs[0].one_liner == ""
 
 
-def test_config_without_key_is_disabled(monkeypatch):
+def test_config_without_key_is_disabled(monkeypatch, tmp_path):
     monkeypatch.delenv("DEEPSEEK_API_KEY", raising=False)
-    monkeypatch.setenv("DEEPSEEK_API_KEY", "")
-    config = LLMConfig.from_env()
+    env = tmp_path / ".env"
+    env.write_text("DEEPSEEK_API_KEY=\n", encoding="utf-8")
+    config = LLMConfig.from_env(dotenv_path=env)
     assert config.enabled is False
+
+
+def test_config_prefers_project_env_over_os(monkeypatch, tmp_path):
+    """系统里旧 Key 不能盖掉项目 .env 里的正确 Key。"""
+    monkeypatch.setenv("DEEPSEEK_API_KEY", "sk-old-invalid-from-os")
+    monkeypatch.setenv("DEEPSEEK_MODEL", "deepseek-chat")
+    env = tmp_path / ".env"
+    env.write_text(
+        "DEEPSEEK_API_KEY=sk-new-from-file\nDEEPSEEK_MODEL=deepseek-flash\n",
+        encoding="utf-8",
+    )
+    config = LLMConfig.from_env(dotenv_path=env)
+    assert config.api_key == "sk-new-from-file"
+    assert config.model == "deepseek-flash"
 
 
 def test_keyword_scoring_boosts_agent_words():

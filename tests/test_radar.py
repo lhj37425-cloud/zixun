@@ -249,3 +249,43 @@ def test_line_failure_still_writes_other_line(tmp_path: Path):
     assert doc["projects"]["pick"] is None
     assert doc["news"]["status"] == "ok"
     assert len(doc["news"]["items"]) >= 1
+
+
+def test_llm_score_failure_falls_back_to_keywords(tmp_path: Path):
+    """打分接口 401/失败时，抓取结果仍应用关键词挑出主推和资讯。"""
+    from daily_dissect.llm.client import LLMError
+
+    class BoomClient:
+        model = "boom"
+        call_count = 0
+
+        def complete_json(self, *, system: str, user: str):
+            self.call_count += 1
+            raise LLMError("401 Authorization Required")
+
+    pool = ProjectPool()
+    pool.add_candidates(
+        [
+            _entry("a/agent-kit", "coding agent llm"),
+            _entry("b/agent-lab", "agent tools"),
+            _entry("c/csv-tool", "csv converter"),
+        ],
+        today=date(2026, 11, 17),
+    )
+    projects_dir = tmp_path / "projects"
+    projects_dir.mkdir()
+    doc = build_daily(
+        pool=pool,
+        news_items=[
+            _news("新 agent 框架", "https://ex.com/1"),
+            _news("普通新闻", "https://ex.com/2"),
+        ],
+        projects_dir=projects_dir,
+        client=BoomClient(),
+        today=date(2026, 11, 17),
+    )
+    assert doc["projects"]["status"] == "ok"
+    assert doc["projects"]["pick"] is not None
+    assert doc["news"]["status"] == "ok"
+    assert len(doc["news"]["items"]) >= 1
+    assert doc["llm"]["used"] is False

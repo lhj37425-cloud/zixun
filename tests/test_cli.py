@@ -65,3 +65,56 @@ def test_open_does_nothing_when_build_refused(tmp_path, capsys, opened):
     assert opened == []
     assert "没有生成" in capsys.readouterr().out
     assert (tmp_path / "notes.txt").exists()
+
+
+def test_update_scripts_exist_and_call_dd_update():
+    root = Path(__file__).resolve().parents[1]
+    expected = {
+        "update.bat": "dd update --open",
+        "update-projects.bat": "dd update --only projects --open",
+        "update-news.bat": "dd update --only news --open",
+    }
+    for name, needle in expected.items():
+        path = root / "scripts" / name
+        assert path.is_file(), path
+        text = path.read_text(encoding="utf-8")
+        assert needle in text
+        assert "cd /d \"%~dp0..\"" in text
+
+
+def test_update_command_runs_radar_then_build(tmp_path, monkeypatch, capsys):
+    calls: list[tuple] = []
+
+    def fake_radar(only=None):
+        calls.append(("radar", only))
+
+        class Report:
+            daily_path = tmp_path / "daily.json"
+            pool_path = tmp_path / "pool.json"
+            projects_ok = True
+            news_ok = True
+            document = {
+                "projects": {"error": None},
+                "news": {"error": None},
+                "llm": {"used": False},
+            }
+
+        return Report()
+
+    def fake_build_site(*, out_dir=None, content_dir=None):
+        calls.append(("build", out_dir))
+        from daily_dissect.web.build import BuildReport
+
+        target = out_dir or (tmp_path / "site")
+        target.mkdir(parents=True, exist_ok=True)
+        (target / "index.html").write_text("<html></html>", encoding="utf-8")
+        (target / ".dd-site").write_text("ok", encoding="utf-8")
+        return BuildReport(out_dir=target, pages=[target / "index.html"])
+
+    monkeypatch.setattr("daily_dissect.radar.run.run_radar", fake_radar)
+    monkeypatch.setattr("daily_dissect.web.build.build_site", fake_build_site)
+
+    assert cli.main(["update", "--only", "news"]) == 0
+    assert ("radar", "news") in calls
+    assert any(c[0] == "build" for c in calls)
+    assert "更新完成" in capsys.readouterr().out

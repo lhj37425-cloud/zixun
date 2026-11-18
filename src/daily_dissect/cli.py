@@ -4,6 +4,7 @@
 - build：根据 content/ 生成网页，放到 site/
 - open：生成网页，再用浏览器打开今日页（平时直接双击 site/index.html 也一样）
 - radar：跑一次每日工作流，挑选并写入今日数据
+- update：radar + build（双击 scripts/update*.bat 会调用它）
 其余命令（new-project）在后面的 BACKLOG 条目里逐个加上，见 docs/TECH.md 第 7 节。
 """
 
@@ -33,6 +34,18 @@ def build_parser() -> argparse.ArgumentParser:
         "--only",
         choices=("projects", "news"),
         help="只跑项目线或资讯线",
+    )
+
+    update = commands.add_parser("update", help="跑每日工作流并重新生成网页（给双击脚本用）")
+    update.add_argument(
+        "--only",
+        choices=("projects", "news"),
+        help="只跑项目线或资讯线",
+    )
+    update.add_argument(
+        "--open",
+        action="store_true",
+        help="完成后用浏览器打开今日页",
     )
     return parser
 
@@ -90,6 +103,21 @@ def run_radar(only: str | None) -> int:
     return 0 if report.projects_ok or report.news_ok else 1
 
 
+def run_update(only: str | None, open_browser: bool) -> int:
+    """先抓取写入今日数据，再生成网页；可选打开浏览器。"""
+    code = run_radar(only)
+    if code != 0:
+        print("抓取没有成功产出可用数据，网页仍会按现有 content/ 生成。")
+    if open_browser:
+        open_code = run_open(None)
+        return open_code if open_code != 0 else code
+    build_code = run_build(None)
+    if build_code != 0:
+        return build_code
+    print("更新完成。双击 site\\index.html 或运行 uv run dd open 就能看。")
+    return code
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = build_parser()
     args = parser.parse_args(argv)
@@ -99,6 +127,8 @@ def main(argv: list[str] | None = None) -> int:
         return run_open(args.out)
     if args.command == "radar":
         return run_radar(args.only)
+    if args.command == "update":
+        return run_update(args.only, args.open)
     parser.print_help()
     return 0
 

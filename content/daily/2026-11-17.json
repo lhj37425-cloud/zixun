@@ -1,0 +1,119 @@
+{
+  "date": "2026-11-17",
+  "generated_at": "2026-11-17T19:14:09+08:00",
+  "llm": {
+    "used": true,
+    "model": "deepseek-flash",
+    "calls": 3
+  },
+  "projects": {
+    "status": "ok",
+    "error": null,
+    "pick": {
+      "repo": "ag-ui-protocol/ag-ui",
+      "url": "https://github.com/ag-ui-protocol/ag-ui",
+      "slug": "ag-ui-protocol-ag-ui",
+      "source": "GitHub Trending",
+      "description": "AG-UI: the Agent-User Interaction Protocol. Bring Agents into Frontend Applications.",
+      "language": "TypeScript",
+      "stars": 19738,
+      "stars_today": 1444,
+      "score": 7.0,
+      "one_liner": "一个让 AI 智能体（Agent）和前端界面顺畅对话的通信协议，本质上是在定义「Agent 说一句、界面显示一句」的标准格式。",
+      "solves": "解决很多团队做 Agent 演示时的麻烦：Agent 在后台跑，前端不知道怎么实时显示它的进度、工具调用和中间结果，每接一个新 Agent 就要重写一遍前端对接代码。有了统一协议，前端和 Agent 可以各自换、互相拼。",
+      "for_you": "FDE 的核心工作是「很快搭出能演示的原型」。这个项目正好是前端展示层和 Agent 之间的那层胶水，学会它，你以后接客户 Demo 时能少写大量重复对接代码。它属于协议和规范类项目，跟着跑起来的门槛不高，但需要你先理解「流式事件」这个基本概念：服务端一边算一边把结果推给前端。",
+      "why_dissect": "值得拆的三个理由：一是它体量小、偏接口约定，不用显卡、本机就能跑通，适合初学者按事件类型一个个看懂；二是它能让你建立「Agent 不是黑箱，它和界面之间有一串标准事件」这个认知，这正是 FDE 跟客户解释方案时的底层语言；三是你能顺带看清整个生态的分工：模型层、Agent 框架层、界面协议层各管什么，看过一遍就不容易被框架名词唬住。"
+    },
+    "alternates": [
+      {
+        "repo": "yetone/magpie",
+        "url": "https://github.com/yetone/magpie",
+        "slug": "yetone-magpie",
+        "source": "HelloGitHub 第 127 期 · Go 项目",
+        "description": "一键切换 AI 编程助手的模型。这是一款用 Go 开发的 AI 编程助手模型管理工具，让 Claude Code 用上 Kimi、Codex 用上 DeepSeek。它通过本地网关转换 OpenAI、Anthropic 和 Gemini 的接口格式，支持多种编程助手和模型服务商，还能把订阅共享给其他助手使用，额度用完后自动切换账号。",
+        "language": null,
+        "stars": null,
+        "stars_today": null,
+        "score": 7.0,
+        "one_liner": "一个本地小网关：把手上的 AI 编程助手和各家模型服务商对接起来，让 Claude Code 能调用 Kimi、Codex 能调用 DeepSeek，额度用完自动换账号。",
+        "solves": "解决两拨人的问题：一是想用便宜或国产模型、又不想放弃熟悉编程助手的人；二是手里有多个订阅、额度经常撞墙，希望自动轮换的人。它还省去了为每家服务商分别配置接口格式的麻烦。",
+        "for_you": "你明确在意 token 成本、也不想被单一 agent 绑死，这个工具正好对上。而且它是用 Go 写的单机服务，安装和运行负担小，适合你在本机试一遍，顺便理解「接口格式转换」这件事在实际工程里长什么样。"
+      },
+      {
+        "repo": "mvanhorn/last30days-skill",
+        "url": "https://github.com/mvanhorn/last30days-skill",
+        "slug": "mvanhorn-last30days-skill",
+        "source": "GitHub Trending",
+        "description": "AI agent skill that researches any topic across Reddit, X, YouTube, HN, Polymarket, and the web - then synthesizes a grounded summary",
+        "language": "Python",
+        "stars": 68517,
+        "stars_today": 135,
+        "score": 6.75,
+        "one_liner": "一个给 AI agent 用的「技能包」：针对任意话题，去 Reddit、X、YouTube、Hacker News、Polymarket 等地方搜集近期的讨论，再汇总成一份有出处的摘要。",
+        "solves": "解决的是「想快速了解某个话题最近 30 天大家到底在说什么」的需求。人工翻多个平台很费时间，而普通 AI 回答又容易凭空编，它靠多来源检索加引用，让结论有据可查。",
+        "for_you": "对 FDE 有直接用处：见客户前先摸清对方行业的近期动向，就是一个很典型的前置调研场景。同时它是一个「skill（技能包）」形态，拆开看能让你明白 agent 的能力是怎么被封装、被复用的。注意它依赖多个外部平台，能否跑通要看接口可用性。"
+      }
+    ]
+  },
+  "news": {
+    "status": "ok",
+    "error": null,
+    "items": [
+      {
+        "title": "Agent 演示惊艳，进生产就不好用：SAP 点破企业 AI 落地的最大幻觉",
+        "url": "https://www.infoq.cn/article/AsfcqUsutpSlPIBE1ok9?utm_source=rss&utm_medium=article",
+        "source": "InfoQ 中文",
+        "published": "2026-11-17T23:00:05+08:00",
+        "category": "落地案例",
+        "score": 9.2,
+        "what": "SAP 公开表达了一个判断：Agent 在演示阶段效果惊艳，但真正进入企业生产环境后往往不好用，中间存在明显落差。",
+        "solves": "给正在推企业 AI 项目的人提了个醒：问题通常不在模型能力，而在真实业务流程、数据质量和权限等工程约束。",
+        "for_you": "这条几乎就是 FDE 岗位的日常命题，客户要的是「能上生产」，而不是「Demo 好看」。记住这个落差，你拆项目时就该多问一句：它假设的运行环境有多理想？"
+      },
+      {
+        "title": "阿里 Qwen4-Max 登场：单任务成本下降 58%，前端编程全球第六",
+        "url": "https://www.infoq.cn/article/bZrW40XdHeMSkfOBxL2C?utm_source=rss&utm_medium=article",
+        "source": "InfoQ 中文",
+        "published": "2026-11-17T18:07:10+08:00",
+        "category": "新能力",
+        "score": 8.5,
+        "what": "阿里发布 Qwen4-Max，称单任务成本下降 58%，并在前端编程能力榜单上排到全球第六。",
+        "solves": "面向对成本和编程效果都敏感的团队，提供更便宜的模型选择，尤其在生成前端代码这类任务上。",
+        "for_you": "成本下降直接影响你搭原型的选型空间，前端编程又是做 Demo 最常碰的活。可以把它记进你的模型选型清单，但榜单排名要等实际试用后再判断。"
+      },
+      {
+        "title": "从 SDLC 到 ADLC：宝洁的 AI 原生组织实验",
+        "url": "https://www.infoq.cn/article/prRYMYmhOvSY9EaMz8Oc?utm_source=rss&utm_medium=article",
+        "source": "InfoQ 中文",
+        "published": "2026-11-17T18:15:13+08:00",
+        "category": "落地案例",
+        "score": 8.0,
+        "what": "宝洁分享了从传统软件开发生命周期（SDLC）转向「AI 原生」的 ADLC 的组织实验。",
+        "solves": "回答一个组织层面的问题：当 AI 参与开发后，流程、角色和协作方式该怎么改，而不只是给工程师发个工具。",
+        "for_you": "FDE 经常要面对客户的组织现实，光有技术方案推不动。这类落地案例能帮你理解「方案要嵌进别人的流程里」，将来跟客户沟通时更有共同语言。"
+      },
+      {
+        "title": "DigitalOcean Managed Agents：为 AI 智能体提供托管云基础设施",
+        "url": "https://www.infoq.cn/article/LjVeWVAsBWwaiifdMRiu?utm_source=rss&utm_medium=article",
+        "source": "InfoQ 中文",
+        "published": "2026-11-17T00:42:41+08:00",
+        "category": "新工具",
+        "score": 7.0,
+        "what": "DigitalOcean 推出 Managed Agents，为 AI 智能体提供托管的云基础设施。",
+        "solves": "解决团队自己搭 Agent 运行环境（部署、扩缩容、运维）麻烦的问题，把这块托管出去。",
+        "for_you": "了解托管方案的存在，能让你在给客户做技术选型时多一个「不自己造轮子」的选项。对你个人学习而言，先用本机跑通更重要，这条当背景知识记下即可。"
+      },
+      {
+        "title": "Google Cloud API Gateway 推出服务实时 AI 应用的流式处理",
+        "url": "https://www.infoq.cn/article/X2WRCQI4NorJVEvpgX5B?utm_source=rss&utm_medium=article",
+        "source": "InfoQ 中文",
+        "published": "2026-11-17T22:00:00+08:00",
+        "category": "新工具",
+        "score": 6.5,
+        "what": "Google Cloud 的 API Gateway 增加了流式处理能力，面向需要实时响应的 AI 应用。",
+        "solves": "解决 AI 应用「边生成边返回」的实时体验问题，让流式输出在经过网关这一层时不被卡住。",
+        "for_you": "和主推的 AG-UI 是同一个主题的另一面：前端要实时显示，链路上的每一层都得支持流式。知道这个约束，将来排查「为什么 Demo 卡住不出字」时就有方向。"
+      }
+    ]
+  }
+}

@@ -182,7 +182,8 @@ daily-dissect/
 │  ├─ projects/            # 每个拆解项目一个文件夹（B-3.2，已放示例）
 │  └─ glossary.md          # 术语表（B-3.2，已建）
 ├─ data/pool.json          # 项目池（B-4.2）
-├─ scripts/update.bat      # 双击手动更新（B-6.1）
+├─ scripts/update.bat      # 双击手动更新（项目线+资讯线，B-6.1）
+├─ scripts/update-projects.bat / update-news.bat  # 只重跑一条线（B-6.1）
 ├─ （prototype/ 已删除）     # 手写的页面原型（B-3.3），B-3.4 验收后删掉了；要看可以找 git 提交 e92b35f
 ├─ site/                   # dd build 生成的网页，不提交；里面的 .dd-site 是生成器的标记
 ├─ sandbox/                # 拆解时下载的别人的项目，不提交
@@ -357,13 +358,15 @@ enabled = true
 
 ## 7. 运行方式（计划，开发时以实际为准）
 
-目前能用的：`uv sync`、`uv run pytest`、`uv run dd --version`、`uv run dd build`、`uv run dd open`，以及下表最后一行给 agent 用的检查办法。其余命令在后面的条目里逐个加上。
+目前能用的：`uv sync`、`uv run pytest`、`uv run dd --version`、`uv run dd build`、`uv run dd open`、`uv run dd radar`、`uv run dd update`，以及下表最后一行给 agent 用的检查办法。其余命令在后面的 BACKLOG 条目里逐个加上。
 
 | 想做什么 | 命令 |
 |---|---|
 | 安装依赖 | `uv sync` |
 | 跑一次每日工作流 | `uv run dd radar` |
 | 只跑项目线或资讯线 | `uv run dd radar --only projects`、`uv run dd radar --only news` |
+| 手动更新（抓取 + 生成网页） | `uv run dd update`；或双击 `scripts/update.bat` |
+| 只重跑项目线 / 资讯线 | 双击 `scripts/update-projects.bat` / `scripts/update-news.bat` |
 | 生成网页 | `uv run dd build` |
 | 生成网页，再用浏览器打开今日页 | `uv run dd open`；平时也可以直接双击 `site/index.html`，或者用浏览器收藏 |
 | 为要拆的项目建文件夹 | `uv run dd new-project <仓库地址>` |

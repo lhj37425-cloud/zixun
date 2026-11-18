@@ -105,7 +105,7 @@
 - **规则**：`AGENTS.md` 写开发规则；`CLAUDE.md` 用一行 `@AGENTS.md` 引用它；TRAE 的 `.trae/rules/project_rules.md` 用一句话指向它（格式在 B-5.6 用 TRAE 实测）。
 - **拆解说明**：`prompts/dissect.md`（B-5.1，已建）。
 - **复制的指令**："请按照 prompts/dissect.md 拆解 https://github.com/作者/项目名"。
-- **agent 拆解时要做的事**（详细写在 `prompts/dissect.md`）：用 `uv run dd new-project <仓库>` 建项目文件夹（命令在 B-5.2；没有时按 TECH 5.3 手建）；把对方的项目下载到 `sandbox/`；按四步写文件；新概念写进术语表；每步结束后运行 `uv run dd build` 重新生成网页。
+- **agent 拆解时要做的事**（详细写在 `prompts/dissect.md`）：用 `uv run dd new-project <仓库>` 建项目文件夹；把对方的项目下载到 `sandbox/`；按四步写文件；新概念写进术语表；每步结束后运行 `uv run dd build` 重新生成网页。
 
 ## 4. 项目结构
 
@@ -138,7 +138,8 @@ daily-dissect/
 ├─ src/daily_dissect/
 │  ├─ __init__.py          # 版本号（B-3.1，已建）
 │  ├─ paths.py             # 项目里各个文件夹的位置（B-3.4，已建）
-│  ├─ cli.py               # 命令入口：dd build、dd open、dd radar 已能用；new-project 后面再加
+│  ├─ cli.py               # 命令入口：dd build / open / radar / update / new-project
+│  ├─ new_project.py       # dd new-project：建拆解文件夹和四步模板（B-5.2）
 │  ├─ sources.py           # 读取 config/sources.toml（B-4.1，已建）
 │  ├─ projects/            # 项目线：解析 Trending/HelloGitHub、项目池（B-4.2，已建；打分挑选在后面）
 │  │  ├─ trending.py       # 解析 Trending HTML
@@ -360,7 +361,7 @@ enabled = true
 
 ## 7. 运行方式（计划，开发时以实际为准）
 
-目前能用的：`uv sync`、`uv run pytest`、`uv run dd --version`、`uv run dd build`、`uv run dd open`、`uv run dd radar`、`uv run dd update`，以及下表最后一行给 agent 用的检查办法。其余命令在后面的 BACKLOG 条目里逐个加上。
+目前能用的：`uv sync`、`uv run pytest`、`uv run dd --version`、`uv run dd build`、`uv run dd open`、`uv run dd radar`、`uv run dd update`、`uv run dd new-project`，以及下表最后一行给 agent 用的检查办法。
 
 | 想做什么 | 命令 |
 |---|---|

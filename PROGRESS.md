@@ -4,9 +4,9 @@
 
 ## 下一步（下一个 agent 从这里开始）
 
-- **现在**：等用户说「开始」后做 **B-5.2 建项目文件夹的命令**（`uv run dd new-project`）。
-- **看网页**：双击 `site/index.html`，或 `uv run dd open` / `scripts/update.bat`。
-- **相关文档**：`docs/PRD.md` F4；`docs/TECH.md` 5.3；`prompts/dissect.md`。
+- **现在**：等用户说「开始」后做 **B-5.3「开始拆解」复制指令定稿**。
+- **看网页**：双击 `site/index.html`，或 `uv run dd open`。
+- **相关文档**：`docs/PRD.md` F4；`BACKLOG.md` B-5.3。
 
 ## 进行中
 
@@ -49,3 +49,4 @@
 | 2026-11-18 | B-6.2 每天 9 点自动运行（用户验收通过） | `run-daily.bat` + `logs/`；任务 `DailyDissect` 09:00 + StartWhenAvailable；试跑结果码 0；`uv run pytest`：61 passed, 2 skipped。提交说明"B-6.2 每天 9 点自动运行" |
 | 2026-11-18 | 第 6 步验收（用户验收通过） | 对照 PRD F5：定时 09:00、错过补跑、手动分线更新；用户确认无修改。提交说明"第 6 步验收通过" |
 | 2026-11-18 | B-5.1 拆解说明（用户验收通过） | `prompts/dissect.md`；`load_prompt("dissect")`；`uv run pytest`：62 passed, 2 skipped。提交说明"B-5.1 拆解说明" |
+| 2026-11-18 | B-5.2 建项目文件夹的命令（用户验收通过） | `dd new-project`；四步模板带「待完成」；`uv run pytest`：74 passed, 2 skipped。提交说明"B-5.2 建项目文件夹的命令" |

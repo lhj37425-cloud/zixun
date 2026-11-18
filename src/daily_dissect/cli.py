@@ -5,8 +5,9 @@
 - open：生成网页，再用浏览器打开今日页（平时直接双击 site/index.html 也一样）
 - radar：跑一次每日工作流，挑选并写入今日数据
 - update：radar + build（双击 scripts/update*.bat 会调用它）
-其余命令（new-project）在后面的 BACKLOG 条目里逐个加上，见 docs/TECH.md 第 7 节。
+- new-project：为要拆的仓库建 content/projects/ 文件夹和四步模板
 """
+
 
 import argparse
 import webbrowser
@@ -46,6 +47,15 @@ def build_parser() -> argparse.ArgumentParser:
         "--open",
         action="store_true",
         help="完成后用浏览器打开今日页",
+    )
+
+    new_project = commands.add_parser(
+        "new-project",
+        help="为要拆的项目建文件夹和四步模板",
+    )
+    new_project.add_argument(
+        "repo",
+        help="仓库地址，例如 https://github.com/作者/项目名 或 作者/项目名",
     )
     return parser
 
@@ -103,6 +113,22 @@ def run_radar(only: str | None) -> int:
     return 0 if report.projects_ok or report.news_ok else 1
 
 
+def run_new_project(repo: str) -> int:
+    from daily_dissect.new_project import NewProjectError, create_project
+
+    try:
+        report = create_project(repo)
+    except NewProjectError as error:
+        print(f"没有建文件夹：{error}")
+        return 1
+    print(f"已建好拆解文件夹：{report.folder}")
+    print(f"仓库：{report.repo}")
+    print(f"开始日期：{report.started}")
+    print("四步模板都带着「待完成」标记；按 prompts/dissect.md 往下写即可。")
+    print("写完一步后运行：uv run dd build")
+    return 0
+
+
 def run_update(only: str | None, open_browser: bool) -> int:
     """先抓取写入今日数据，再生成网页；可选打开浏览器。"""
     code = run_radar(only)
@@ -129,6 +155,8 @@ def main(argv: list[str] | None = None) -> int:
         return run_radar(args.only)
     if args.command == "update":
         return run_update(args.only, args.open)
+    if args.command == "new-project":
+        return run_new_project(args.repo)
     parser.print_help()
     return 0
 

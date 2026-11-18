@@ -3,7 +3,7 @@
 和普通的 Markdown 转换相比，有三点不同：
 1. 文件开头的一级标题（比如"# 一页纸：……"）不显示，页面上每一步自己有标题；
 2. 标题整体降一级（## 变成 h3），因为页面上每一步的标题已经是 h2；
-3. ```mermaid 代码块会变成流程图，由页面上的 Mermaid 画出来。
+3. ```mermaid 代码块变成「查看流程图」按钮，点开全屏舒服看，不在正文里挤着画。
 文件里直接写的 HTML 一律当成普通文字显示，不会被执行。
 """
 
@@ -19,10 +19,25 @@ def make_markdown() -> MarkdownIt:
         token = tokens[idx]
         if token.info.strip().lower() == "mermaid":
             code = escape(token.content.rstrip("\n"))
-            return f'<div class="diagram">\n<pre class="mermaid">{code}</pre>\n</div>\n'
+            return (
+                '<figure class="diagram-launch">'
+                '<button type="button" class="diagram-open" data-diagram-open>'
+                "查看流程图"
+                "</button>"
+                f'<pre class="diagram-source" hidden>{code}</pre>'
+                "</figure>\n"
+            )
         return default_fence(tokens, idx, options, env)
 
+    def render_table_open(self, tokens, idx, options, env):
+        return '<div class="table-scroll"><table>\n'
+
+    def render_table_close(self, tokens, idx, options, env):
+        return "</table></div>\n"
+
     md.add_render_rule("fence", render_fence)
+    md.add_render_rule("table_open", render_table_open)
+    md.add_render_rule("table_close", render_table_close)
     return md
 
 

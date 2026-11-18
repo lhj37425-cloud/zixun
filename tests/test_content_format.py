@@ -19,6 +19,9 @@ CATEGORIES = {"新能力", "新工具", "新产品", "落地案例"}
 STEP_FILES = ["01-overview.md", "02-flows.md", "03-run.md", "04-qa.md"]
 TODO_MARK = "<!-- 待完成 -->"
 
+MERMAID_BLOCK = re.compile(r"```mermaid\s*\n(.*?)```", re.S)
+CORE_CLASS = re.compile(r"^class\s+[\w,\s]+\s+core$", re.I)
+
 PROJECT_FIELDS = {
     "repo", "url", "slug", "source", "description", "language",
     "stars", "stars_today", "score", "one_liner", "solves", "for_you",
@@ -117,6 +120,35 @@ def test_project_folder_follows_format(folder: Path):
     assert re.fullmatch(r"\d{4}-\d{2}-\d{2}", meta["started"])
     for name in STEP_FILES:
         assert (folder / name).is_file(), f"{folder.name} 缺少 {name}"
+
+
+@pytest.mark.parametrize("folder", project_folders() or [None], ids=lambda p: getattr(p, "name", "none"))
+def test_flow_diagrams_use_lanes_and_core(folder: Path):
+    """B-3.6：流程图必须能被站内渲染器画成泳道画板样式。
+
+    检查的是 agents 最容易写偏的地方：方向、泳道、核心节点。
+    第 2 步还没写完（文件里还有“待完成”标记）时跳过，不拦半成品。
+    """
+    if folder is None:
+        pytest.skip("还没有拆解项目")
+    text = (folder / "02-flows.md").read_text(encoding="utf-8")
+    if TODO_MARK in text:
+        pytest.skip(f"{folder.name} 的第 2 步还没写完")
+    blocks = MERMAID_BLOCK.findall(text)
+    assert len(blocks) == 2, f"{folder.name} 的 02-flows.md 要有两张 mermaid 流程图"
+    for index, block in enumerate(blocks, 1):
+        lines = [line.strip() for line in block.splitlines() if line.strip()]
+        head = lines[0] if lines else ""
+        assert head.lower().startswith("flowchart lr"), (
+            f"{folder.name} 第 {index} 张图的第一行必须是 `flowchart LR`，现在是 `{head}`"
+        )
+        assert any(line.startswith("subgraph ") for line in lines), (
+            f"{folder.name} 第 {index} 张图没有 subgraph 泳道"
+        )
+        cores = [line for line in lines if CORE_CLASS.match(line)]
+        assert len(cores) == 1, (
+            f"{folder.name} 第 {index} 张图要有且只有一个 `class 节点ID core`，现在是 {len(cores)} 个"
+        )
 
 
 @pytest.mark.skipif(not SAMPLE_PROJECT.exists(), reason="示例数据已经删掉了")

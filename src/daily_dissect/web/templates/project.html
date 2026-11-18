@@ -2,6 +2,7 @@
 {% import "_macros.html" as ui %}
 
 {% block title %}{{ project.repo }} · 拆解 · 今日一拆{% endblock %}
+{% block body_attrs %} class="page-project"{% endblock %}
 
 {% block before_main %}
 <nav class="breadcrumb" aria-label="当前位置">
@@ -27,24 +28,26 @@
   {% endif %}
   {{ ui.steps(project, linked=true, label="拆解进度，点击跳到对应的一步") }}
   {% if not project.finished %}
-  {# 没拆完才显示这个按钮；四步都完成后不显示 #}
   <div class="actions">
     {{ ui.copy_button(project.instruction, "继续拆解", primary=true) }}
-    <p class="copy-hint">会复制整句指令：<code>{{ project.instruction }}</code>。粘贴给 agent 后，会从「{{ project.next_step.name }}」接着做。</p>
+    <p class="copy-hint">复制后粘贴给 agent，会从「{{ project.next_step.name }}」接着做。</p>
   </div>
   {% endif %}
 </div>
 
 {% for step in project.steps %}
-<section class="step-section{{ ' is-done' if step.done else '' }}" id="step-{{ step.number }}" aria-labelledby="step-{{ step.number }}-title">
-  <h2 class="step-heading" id="step-{{ step.number }}-title">
-    <span class="step-no" aria-hidden="true">{{ step.number }}</span>{{ step.name }}
+{# 未完成默认展开；已完成默认折叠，点进度条或标题再打开 #}
+<details class="step-panel{{ ' is-done' if step.done else '' }}" id="step-{{ step.number }}"{% if not step.done %} open{% endif %}>
+  <summary class="step-heading">
+    <span class="step-no" aria-hidden="true">{{ step.number }}</span>
+    <span class="step-heading-text">{{ step.name }}</span>
     {% if step.done %}
     <span class="badge badge-done">{{ ui.icon("check") }}已完成</span>
     {% else %}
     <span class="badge">{{ ui.icon("circle") }}还没做</span>
     {% endif %}
-  </h2>
+  </summary>
+  <div class="step-body">
   {% if step.done %}
   <div class="prose">
 {{ step.html }}
@@ -53,21 +56,23 @@
   <div class="empty-step">
     <p>{{ step.pending_text }}</p>
     {% if step is sameas project.next_step %}
-    <p>想接着拆，点页面上方的"继续拆解"，把指令粘贴给 agent 就行。</p>
+    <p>想接着拆，点页面上方的「继续拆解」，把指令粘贴给 agent 就行。</p>
     {% endif %}
   </div>
   {% endif %}
-</section>
+  </div>
+</details>
 {% endfor %}
 {% endblock %}
 
 {% block scripts %}
 {% if not project.finished %}
 <p class="sr-only" id="copy-status" role="status" aria-live="polite"></p>
-<script src="{{ root }}assets/app.js"></script>
+<script src="{{ root }}assets/app.js?v=20261118-board2"></script>
 {% endif %}
+<script src="{{ root }}assets/project.js?v=20261118-board2"></script>
 {% if project.has_mermaid %}
-<script src="{{ root }}assets/vendor/mermaid.min.js"></script>
-<script src="{{ root }}assets/diagrams.js"></script>
+<script src="{{ root }}assets/vendor/dagre.min.js?v=20261118-boardlook"></script>
+<script src="{{ root }}assets/diagrams.js?v=20261118-boardlook"></script>
 {% endif %}
 {% endblock %}

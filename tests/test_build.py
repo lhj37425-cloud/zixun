@@ -31,8 +31,9 @@ def test_all_pages_and_assets_are_generated(site):
     expected = [
         "index.html", "history.html", "projects.html", "glossary.html",
         "daily/2026-11-15.html", "projects/example-agent-demo.html",
-        "assets/style.css", "assets/app.js", "assets/diagrams.js", "assets/favicon.svg",
-        "assets/vendor/mermaid.min.js", "favicon.ico", SITE_MARKER,
+        "assets/style.css", "assets/app.js", "assets/project.js", "assets/diagrams.js",
+        "assets/favicon.svg", "assets/vendor/mermaid.min.js", "assets/vendor/dagre.min.js",
+        "assets/vendor/dagre.LICENSE.txt", "favicon.ico", SITE_MARKER,
     ]
     for rel_path in expected:
         assert (site / rel_path).is_file(), f"缺少 {rel_path}"
@@ -81,7 +82,7 @@ def test_past_day_page_shows_failures(site):
     assert "资讯线这天没抓到" in html
     assert "资讯线失败" in html
     assert "当天 +87" in html
-    assert 'href="../assets/style.css"' in html
+    assert 'href="../assets/style.css?v=20261118-github-palette"' in html
     assert 'aria-current="page">往期</a>' in html
 
 
@@ -108,8 +109,19 @@ def test_project_page(site):
     # 文件开头的"# 一页纸：……"不显示，## 标题降成 h3
     assert "一页纸：example/agent-demo" not in html
     assert "<h3>解决谁的什么问题</h3>" in html
-    assert html.count('<pre class="mermaid">') == 2
-    assert '<script src="../assets/vendor/mermaid.min.js"></script>' in html
+    assert html.count('data-diagram-open') == 2
+    assert html.count("查看流程图") == 2
+    assert html.count('class="diagram-source"') == 2
+    assert 'assets/vendor/dagre.min.js' in html
+    assert 'assets/diagrams.js' in html
+    assert 'class="page-project"' in html
+    assert "assets/project.js" in html
+    # 已完成步骤默认折叠；未完成默认展开
+    assert html.count("<details") == 4
+    assert 'id="step-1"' in html and "open" not in html.split('id="step-1"')[0][-80:]
+    assert 'id="step-3" open' in html or 'id="step-3"\n open' in html or re.search(
+        r'id="step-3"[^>]*\sopen', html
+    )
     # 没拆完：有"继续拆解"按钮，提示从"跑起来"接着做；指令与今日页同一句定稿
     assert '<span class="btn-label">继续拆解</span>' in html
     assert (
@@ -142,7 +154,8 @@ def test_internal_links_resolve(site):
                 if ref[1:] not in ids:
                     missing.append(f"{page.name}: {ref}")
                 continue
-            if not (page.parent / ref.split("#")[0]).resolve().exists():
+            path_part = ref.split("#", 1)[0].split("?", 1)[0]
+            if not (page.parent / path_part).resolve().exists():
                 missing.append(f"{page.name}: {ref}")
     assert not missing, missing
 
@@ -177,7 +190,10 @@ def test_markdown_rendering():
     assert "一页纸：x/y" not in html
     assert "<h3>小标题</h3>" in html
     assert "&lt;script&gt;" in html and "<script>" not in html
-    assert '<div class="diagram">\n<pre class="mermaid">flowchart TD\n    A --&gt; B</pre>' in html
+    assert 'class="diagram-launch"' in html
+    assert 'data-diagram-open' in html
+    assert "查看流程图" in html
+    assert '<pre class="diagram-source" hidden>flowchart TD\n    A --&gt; B</pre>' in html
 
 
 def test_small_helpers():

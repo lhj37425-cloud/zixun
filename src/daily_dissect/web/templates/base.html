@@ -6,9 +6,9 @@
   <meta name="color-scheme" content="light dark">
   <title>{% block title %}今日一拆{% endblock %}</title>
   <link rel="icon" href="{{ root }}assets/favicon.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="{{ root }}assets/style.css">
+  <link rel="stylesheet" href="{{ root }}assets/style.css?v=20261118-github-palette">
 </head>
-<body>
+<body{% block body_attrs %}{% endblock %}>
 
 {% include "_icons.html" %}
 

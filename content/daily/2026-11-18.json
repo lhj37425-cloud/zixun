@@ -1,0 +1,76 @@
+{
+  "date": "2026-11-18",
+  "generated_at": "2026-11-18T14:00:30+08:00",
+  "llm": {
+    "used": true,
+    "model": "deepseek-flash",
+    "calls": 2
+  },
+  "projects": {
+    "status": "failed",
+    "error": "[WinError 10060] 由于连接方在一段时间后没有正确答复或连接的主机没有反应，连接尝试失败。",
+    "pick": null,
+    "alternates": []
+  },
+  "news": {
+    "status": "ok",
+    "error": null,
+    "items": [
+      {
+        "title": "Agent演示惊艳，一进生产就不好用：SAP直指企业AI落地的最大幻觉",
+        "url": "https://www.infoq.cn/article/AsfcqUsutpSlPIBE1ok9?utm_source=rss&utm_medium=article",
+        "source": "InfoQ 中文",
+        "published": "2026-11-17T23:00:05+08:00",
+        "category": "落地案例",
+        "score": 9.0,
+        "what": "SAP 在公开分享中指出：Agent 演示效果往往很惊艳，但一进入企业生产环境就不好用，并把这一点称为企业 AI 落地时最大的误解。",
+        "solves": "解决企业引入 AI Agent 时「演示通过就等于可以上线」的误判问题，提醒团队提前关注生产环境里的真实约束。",
+        "for_you": "这是 FDE 最核心的一课：客户看的演示和你交付的系统不是一回事。拆项目时，可以专门问一句「它在真实数据、权限和异常情况下还能跑吗」，把这类判断练成习惯。"
+      },
+      {
+        "title": "OpenAI 发布 GPT-6.2 Astra 与 Sol",
+        "url": "https://www.qbitai.com/2026/11/510707.html",
+        "source": "量子位",
+        "published": "2026-11-18T08:49:14+08:00",
+        "category": "新能力",
+        "score": 8.5,
+        "what": "据该报道，OpenAI 发布了 GPT-6.2 的两个版本 Astra 与 Sol；输入里没有更多细节，具体能力与差异需要自行查看原文。",
+        "solves": "面向需要跟进模型能力更新的开发者和产品方，提供新的可选模型。",
+        "for_you": "知道有这回事即可，不必马上升级。真正值得留意的是：新模型出来后，你拆过的 agent 项目里哪些环节可以换掉、成本会不会变化。"
+      },
+      {
+        "title": "从 SDLC 到 ADLC：宝洁的 AI 原生组织实验",
+        "url": "https://www.infoq.cn/article/prRYMYmhOvSY9EaMz8Oc?utm_source=rss&utm_medium=article",
+        "source": "InfoQ 中文",
+        "published": "2026-11-17T18:15:13+08:00",
+        "category": "落地案例",
+        "score": 8.0,
+        "what": "宝洁分享了从传统 SDLC（软件开发流程）转向 ADLC（AI 原生开发流程）的组织实验，讲的是流程和团队怎么改，而不只是换工具。",
+        "solves": "解决企业「买了 AI 工具但开发流程没变、收益有限」的问题。",
+        "for_you": "FDE 落地时，一半工作是把客户的流程改对。这篇能帮你理解「流程改造」长什么样，跟客户沟通时不只谈技术，还能谈协作方式。"
+      },
+      {
+        "title": "谷歌公布已发现 500 多个 XSS 漏洞的 AI 安全代理 PageBreak",
+        "url": "https://www.infoq.cn/article/uGTol3TSzOV72NSrcBrB?utm_source=rss&utm_medium=article",
+        "source": "InfoQ 中文",
+        "published": "2026-11-18T19:00:00+08:00",
+        "category": "新工具",
+        "score": 7.8,
+        "what": "谷歌公布了一个叫 PageBreak 的 AI 安全代理，据称已发现 500 多个 XSS（网页脚本注入）漏洞。",
+        "solves": "帮助安全团队用 AI 代理批量排查网页安全漏洞，减少人工审计的负担。",
+        "for_you": "这是一个「AI 代理 + 明确任务 + 可验证结果」的好样例：漏洞是否真实存在，可以验证。适合当拆解对象，看它怎么把大任务拆成可执行的检查步骤。"
+      },
+      {
+        "title": "GitHub 让 AI 接管工作流，单次默认预算 10 美元：是不是太大方了？",
+        "url": "https://www.infoq.cn/article/lMs1bM1muspglUjMr1l3?utm_source=rss&utm_medium=article",
+        "source": "InfoQ 中文",
+        "published": "2026-11-18T16:00:00+08:00",
+        "category": "新工具",
+        "score": 7.8,
+        "what": "GitHub 让 AI 接管部分工作流，并给单次任务设了默认 10 美元的预算上限，引发「这个额度是否太大方」的讨论。",
+        "solves": "解决 AI 自动执行任务时成本失控的担忧，用预算上限给自动化加一道限制。",
+        "for_you": "很实用的一点：给 agent 设成本上限，是把它交付给客户前必须做的事。你在意 token 成本，这条正好可以当「怎么给代理定预算」的参考案例。"
+      }
+    ]
+  }
+}

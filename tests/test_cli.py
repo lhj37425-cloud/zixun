@@ -82,6 +82,30 @@ def test_update_scripts_exist_and_call_dd_update():
         assert "cd /d \"%~dp0..\"" in text
 
 
+def test_scheduled_daily_scripts_exist():
+    root = Path(__file__).resolve().parents[1]
+    scripts = root / "scripts"
+
+    runner = (scripts / "run-daily.bat").read_text(encoding="utf-8")
+    assert "dd update" in runner
+    assert "--open" not in runner
+    assert "logs\\daily-" in runner or "logs/daily-" in runner
+    assert "pause" not in runner.lower()
+
+    install = (scripts / "install-daily-task.ps1").read_text(encoding="utf-8")
+    assert "DailyDissect" in install
+    assert "09:00" in install
+    assert "StartWhenAvailable" in install
+    assert "run-daily.bat" in install
+
+    uninstall = (scripts / "uninstall-daily-task.ps1").read_text(encoding="utf-8")
+    assert "DailyDissect" in uninstall
+    assert "Unregister-ScheduledTask" in uninstall
+
+    assert (scripts / "install-daily-task.bat").is_file()
+    assert (scripts / "uninstall-daily-task.bat").is_file()
+
+
 def test_update_command_runs_radar_then_build(tmp_path, monkeypatch, capsys):
     calls: list[tuple] = []
 

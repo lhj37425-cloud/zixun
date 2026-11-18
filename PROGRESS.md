@@ -4,14 +4,14 @@
 
 ## 下一步（下一个 agent 从这里开始）
 
-- **现在**：等用户说「开始」后做 **B-6.2 每天 9 点自动运行**（任务计划 + `logs/`）。
-- **看网页**：双击 `site/index.html`，或 `uv run dd open` / 双击 `scripts/update.bat`。
+- **现在**：等用户说「开始」后做 **第 6 步验收**（对照 PRD F5 全部勾选）。
+- **看网页**：双击 `site/index.html`，或 `uv run dd open` / `scripts/update.bat`。
 - **相关文档**：`docs/PRD.md` F5；`docs/TECH.md` 第 7 节。
 
 ## 进行中
 
 - **第 4 步验收**（进行中，可与第 6 步并行）
-  - 第 1 天（2026-11-17）已有真实数据；第 2 天需再跑一次后才能整体验收通过。
+  - 已有两天真实数据：`2026-11-17`、`2026-11-18`；等用户确认内容质量后可整体验收通过。
 
 
 ## 卡住的地方
@@ -46,3 +46,4 @@
 | 2026-11-17 | B-4.7 两条线同时运行、互不影响（用户验收通过） | 线程池并行抓取；失败隔离；页面提示测试；`uv run pytest`：57 passed。提交说明"B-4.7 两条线同时运行、互不影响" |
 | 2026-11-17 | B-4.8 清理示例数据（用户验收通过） | 删除 content 示例日/项目；术语表去示例指向；`uv run pytest`：53 passed, 4 skipped。提交说明"B-4.8 清理示例数据" |
 | 2026-11-18 | B-6.1 手动更新脚本（用户验收通过） | `dd update`；`scripts/update*.bat`；`.env` 优先于系统 Key；LLM 打分失败回落关键词；`uv run pytest`：59 passed, 2 skipped。提交说明"B-6.1 手动更新脚本" |
+| 2026-11-18 | B-6.2 每天 9 点自动运行（用户验收通过） | `run-daily.bat` + `logs/`；任务 `DailyDissect` 09:00 + StartWhenAvailable；试跑结果码 0；`uv run pytest`：61 passed, 2 skipped。提交说明"B-6.2 每天 9 点自动运行" |

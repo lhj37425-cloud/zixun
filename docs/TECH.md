@@ -184,6 +184,8 @@ daily-dissect/
 ├─ data/pool.json          # 项目池（B-4.2）
 ├─ scripts/update.bat      # 双击手动更新（项目线+资讯线，B-6.1）
 ├─ scripts/update-projects.bat / update-news.bat  # 只重跑一条线（B-6.1）
+├─ scripts/run-daily.bat   # 任务计划调用：抓取+生成，写入 logs/（B-6.2）
+├─ scripts/install-daily-task.bat / uninstall-daily-task.bat  # 安装/卸载每天 9:00 任务（B-6.2）
 ├─ （prototype/ 已删除）     # 手写的页面原型（B-3.3），B-3.4 验收后删掉了；要看可以找 git 提交 e92b35f
 ├─ site/                   # dd build 生成的网页，不提交；里面的 .dd-site 是生成器的标记
 ├─ sandbox/                # 拆解时下载的别人的项目，不提交
@@ -367,6 +369,9 @@ enabled = true
 | 只跑项目线或资讯线 | `uv run dd radar --only projects`、`uv run dd radar --only news` |
 | 手动更新（抓取 + 生成网页） | `uv run dd update`；或双击 `scripts/update.bat` |
 | 只重跑项目线 / 资讯线 | 双击 `scripts/update-projects.bat` / `scripts/update-news.bat` |
+| 安装每天 9:00 自动更新 | 双击 `scripts/install-daily-task.bat`（任务名 `DailyDissect`；错过则开机后尽快补跑） |
+| 卸载自动更新 | 双击 `scripts/uninstall-daily-task.bat` |
+| 定时任务立刻试跑 | PowerShell：`Start-ScheduledTask -TaskName DailyDissect`；日志在 `logs/daily-日期.log` |
 | 生成网页 | `uv run dd build` |
 | 生成网页，再用浏览器打开今日页 | `uv run dd open`；平时也可以直接双击 `site/index.html`，或者用浏览器收藏 |
 | 为要拆的项目建文件夹 | `uv run dd new-project <仓库地址>` |

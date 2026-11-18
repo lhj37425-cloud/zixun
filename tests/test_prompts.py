@@ -50,6 +50,10 @@ def test_score_news_defines_four_categories():
     for category in ("新能力", "新工具", "新产品", "落地案例"):
         assert category in text
     assert "groups" in text
+    # 资讯线 ≠ 再安利仓库；要风向 / 能力边界 / 有结论的判断
+    assert "项目线" in text and ("风向" in text or "能力边界" in text)
+    assert "仓库" in text or "安利" in text
+    assert "应用层" in text or "落地" in text
 
 
 def test_changing_prompt_file_changes_loaded_text_without_code(tmp_path):

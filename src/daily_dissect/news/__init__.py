@@ -2,9 +2,10 @@
 
 from daily_dissect.news.collect import NewsFetchResult, collect_news
 from daily_dissect.news.models import NewsItem, SourceFailure
-from daily_dissect.news.parse import filter_recent, parse_feed
+from daily_dissect.news.parse import NEWS_WITHIN_HOURS, filter_recent, parse_feed
 
 __all__ = [
+    "NEWS_WITHIN_HOURS",
     "NewsFetchResult",
     "NewsItem",
     "SourceFailure",

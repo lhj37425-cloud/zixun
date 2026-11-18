@@ -36,6 +36,30 @@ from daily_dissect.radar.select import (
 
 BEIJING = timezone(timedelta(hours=8))
 
+# 候选很多时送给模型前先压缩，避免领袖框架稿被淹没。
+NEWS_SCORE_LIMIT = 60
+_NEWS_PRIORITY_WORDS = (
+    "李彦宏",
+    "纳德拉",
+    "黄仁勋",
+    "Altman",
+    "演讲",
+    "访谈",
+    "智能组织",
+    "新厂房",
+    "应用层",
+    "组织进化",
+    "APEC",
+    "世界大会",
+    "提出",
+    "判断",
+    "路线",
+    "泡沫",
+    "落地",
+    "FDE",
+)
+_NEWS_DEMOTE_WORDS = ("早知道", "近期资讯", "Almanac", "一周", "早报")
+
 
 def _iso_now() -> str:
     return datetime.now(BEIJING).replace(microsecond=0).isoformat()
@@ -58,6 +82,39 @@ def _project_payload(entry) -> dict[str, str]:
         "language": entry.language or "",
         "source": entry.source or "",
     }
+
+
+def _news_priority_score(item: NewsItem) -> int:
+    title = item.title or ""
+    score = sum(3 for word in _NEWS_PRIORITY_WORDS if word in title)
+    score -= sum(2 for word in _NEWS_DEMOTE_WORDS if word in title)
+    return score
+
+
+def prioritize_news_for_scoring(
+    items: list[NewsItem],
+    *,
+    limit: int = NEWS_SCORE_LIMIT,
+) -> list[NewsItem]:
+    """时间窗拉长后条目会很多：优先保留「有人名/框架」的稿，其余按新补齐。"""
+    if len(items) <= limit:
+        return list(items)
+
+    must = [item for item in items if _news_priority_score(item) > 0]
+    must.sort(key=lambda item: (item.published, _news_priority_score(item)), reverse=True)
+    rest = [item for item in items if _news_priority_score(item) <= 0]
+    rest.sort(key=lambda item: item.published, reverse=True)
+
+    chosen: list[NewsItem] = []
+    seen: set[str] = set()
+    for item in must + rest:
+        if item.url in seen:
+            continue
+        seen.add(item.url)
+        chosen.append(item)
+        if len(chosen) >= limit:
+            break
+    return chosen
 
 
 def _news_payload(items: list[NewsItem]) -> list[dict[str, str]]:
@@ -184,7 +241,8 @@ def build_daily(
         news_block = {"status": "failed", "error": news_error, "items": []}
     else:
         try:
-            payloads = _news_payload(news_items)
+            scoring_items = prioritize_news_for_scoring(news_items)
+            payloads = _news_payload(scoring_items)
             if client is not None and payloads:
                 try:
                     groups = score_news_with_llm(client, payloads)
@@ -192,7 +250,9 @@ def build_daily(
                     groups = score_news_by_keywords(payloads)
             else:
                 groups = score_news_by_keywords(payloads) if payloads else []
-            selected_news = pick_news(groups, _items_by_id(news_items), limit=5, max_per_category=2)
+            selected_news = pick_news(
+                groups, _items_by_id(scoring_items), limit=5, max_per_category=2
+            )
             news_block = {"status": "ok", "error": None, "items": []}
         except Exception as error:
             news_block = {

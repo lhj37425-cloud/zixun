@@ -53,7 +53,7 @@
 ### 3.2 资讯线：今天该知道什么
 
 1. 按 `config/sources.toml` 逐个抓取 RSS，每个源最多等 20 秒，失败就跳过并记下原因。
-2. 只保留最近 24 小时发布的内容；链接完全相同的只留一条。
+2. 只保留最近 24 小时发布的内容（`NEWS_WITHIN_HOURS`）；链接完全相同的只留一条。送给模型打分前，若超过 60 条，优先留下「领袖/框架」类标题，其余按新补齐（`prioritize_news_for_scoring`）。
 3. **DeepSeek 第 2 次调用**：把说同一件事的几条合并成一组，每组打分并分进 4 个栏目，只输出编号、栏目和分数。
 4. 取前 5 条，同一个栏目最多 2 条。
 
@@ -104,7 +104,7 @@
 
 - **规则**：`AGENTS.md` 写开发规则；`CLAUDE.md` 用一行 `@AGENTS.md` 引用它；TRAE 的 `.trae/rules/project_rules.md` 用一句话指向它（格式在 B-5.6 用 TRAE 实测）。
 - **拆解说明**：`prompts/dissect.md`（B-5.1，已建）。
-- **复制的指令**："请按照 prompts/dissect.md 拆解 https://github.com/作者/项目名"。
+- **复制的指令**（B-5.3 定稿）：`请按照 prompts/dissect.md 拆解 https://github.com/作者/项目名`。由 `dissect_instruction()` 生成；「开始拆解」和「继续拆解」复制同一句。
 - **agent 拆解时要做的事**（详细写在 `prompts/dissect.md`）：用 `uv run dd new-project <仓库>` 建项目文件夹；把对方的项目下载到 `sandbox/`；按四步写文件；新概念写进术语表；每步结束后运行 `uv run dd build` 重新生成网页。
 
 ## 4. 项目结构
@@ -147,7 +147,7 @@ daily-dissect/
 │  │  ├─ pool.py           # data/pool.json 读写、去重、30 天过期
 │  │  ├─ sync.py           # 把解析结果写进项目池
 │  │  └─ fetch.py          # 真正发请求抓网页（radar 时用）
-│  ├─ news/                # 资讯线：RSS 抓取、24 小时过滤、去重（B-4.3，已建；合并分栏在后面）
+│  ├─ news/                # 资讯线：RSS 抓取、24 小时过滤、去重（B-4.3）
 │  │  ├─ parse.py          # 解析 RSS/Atom，过滤与去重
 │  │  ├─ fetch.py          # 单个源抓取（超时 20 秒）
 │  │  └─ collect.py        # 汇总全部源，记录失败原因
@@ -339,7 +339,7 @@ enabled = true
 | HelloGitHub 某一期内容 | `https://raw.githubusercontent.com/521xueweihan/HelloGitHub/HEAD/content/HelloGitHub{期号}.md` | Markdown。"### 分类"下面是"序号、[名称](链接)：描述"；链接里 `target=` 后面才是真正的 GitHub 地址 | 能访问；第 127 期有 42 个项目，分类里有"人工智能"和"Skills" |
 | DeepSeek | `https://api.deepseek.com/chat/completions` | OpenAI 兼容；请求头 `Authorization: Bearer <Key>`；用 JSON 输出模式 | 还没测（要用户自己的 API Key） |
 
-资讯源（RSS / Atom），11 个都能访问：
+资讯源（RSS / Atom），12 个（2026-11-18 起含极客公园）：
 
 | 名称 | 地址 |
 |---|---|
@@ -354,6 +354,7 @@ enabled = true
 | Hacker News（100 分以上） | `https://hnrss.org/frontpage?points=100` |
 | GitHub 博客 | `https://github.blog/feed/` |
 | 爱范儿 | `https://www.ifanr.com/feed` |
+| 极客公园 | `https://www.geekpark.net/rss` |
 
 抓不到条目的源：机器之心（`https://www.jiqizhixin.com/rss`）、36 氪（`https://36kr.com/feed`）、LangChain（`https://blog.langchain.com/rss/`）。
 

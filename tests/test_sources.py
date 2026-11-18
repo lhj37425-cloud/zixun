@@ -19,6 +19,7 @@ EXPECTED_NEWS = [
     "Hacker News（100 分以上）",
     "GitHub 博客",
     "爱范儿",
+    "极客公园",
 ]
 
 
@@ -46,7 +47,7 @@ def test_each_source_has_name_address_and_line():
     assert "开源书籍" in hello.skip_sections
     assert hello.enabled is True
 
-    assert len(sources.news) == 11
+    assert len(sources.news) == 12
     assert [n.name for n in sources.news] == EXPECTED_NEWS
     for item in sources.news:
         assert item.line == "news"
@@ -62,7 +63,7 @@ def test_add_news_source_without_code_change(tmp_path):
     copy.write_text(text, encoding="utf-8")
 
     sources = load_sources(copy)
-    assert len(sources.news) == 12
+    assert len(sources.news) == 13
     assert sources.news[-1].name == "测试源"
     assert sources.news[-1].address == "https://example.com/feed"
     assert sources.news[-1].line == "news"

@@ -1,11 +1,11 @@
-"""B-4.3：资讯线抓取——24 小时过滤、去重、单源失败隔离。"""
+"""B-4.3：资讯线抓取——时间窗过滤、去重、单源失败隔离。"""
 
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
 from daily_dissect.news.collect import collect_news
-from daily_dissect.news.models import SourceFailure
-from daily_dissect.news.parse import dedupe_by_url, filter_recent, parse_feed
+from daily_dissect.news.models import NewsItem, SourceFailure
+from daily_dissect.news.parse import NEWS_WITHIN_HOURS, dedupe_by_url, filter_recent, parse_feed
 from daily_dissect.sources import NewsSource
 
 FIXTURES = Path(__file__).resolve().parent / "fixtures" / "news"
@@ -40,6 +40,26 @@ def test_filter_keeps_only_last_24_hours():
     assert "https://www.qbitai.com/2026/11/new-model.html" in urls
     assert "https://shared.example.com/same-story" in urls
     assert "https://www.qbitai.com/2026/10/old.html" not in urls
+
+
+def test_default_window_is_twenty_four_hours():
+    assert NEWS_WITHIN_HOURS == 24
+    fresh = NewsItem(
+        title="今天的判断",
+        url="https://example.com/today",
+        source="测试",
+        published=NOW - timedelta(hours=2),
+    )
+    too_old = NewsItem(
+        title="昨天更早",
+        url="https://example.com/old",
+        source="测试",
+        published=NOW - timedelta(hours=30),
+    )
+    kept = filter_recent([fresh, too_old], now=NOW)
+    urls = [i.url for i in kept]
+    assert fresh.url in urls
+    assert too_old.url not in urls
 
 
 def test_dedupe_by_identical_url():

@@ -67,3 +67,8 @@ enabled = true
 name = "爱范儿"
 url = "https://www.ifanr.com/feed"
 enabled = true
+
+[[news]]
+name = "极客公园"
+url = "https://www.geekpark.net/rss"
+enabled = true

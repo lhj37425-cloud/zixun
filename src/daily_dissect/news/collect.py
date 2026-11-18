@@ -10,7 +10,7 @@ import httpx
 
 from daily_dissect.news.fetch import DEFAULT_TIMEOUT, USER_AGENT, fetch_one_source
 from daily_dissect.news.models import NewsItem, SourceFailure
-from daily_dissect.news.parse import dedupe_by_url, filter_recent
+from daily_dissect.news.parse import NEWS_WITHIN_HOURS, dedupe_by_url, filter_recent
 from daily_dissect.sources import NewsSource, load_sources
 
 Fetcher = Callable[[NewsSource], tuple[list[NewsItem], SourceFailure | None]]
@@ -26,7 +26,7 @@ def collect_news(
     sources: list[NewsSource] | tuple[NewsSource, ...] | None = None,
     *,
     now: datetime | None = None,
-    within_hours: int = 24,
+    within_hours: int = NEWS_WITHIN_HOURS,
     timeout: float = DEFAULT_TIMEOUT,
     fetcher: Fetcher | None = None,
     client: httpx.Client | None = None,

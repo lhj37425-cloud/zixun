@@ -1,7 +1,7 @@
 """B-4.6：挑选并写入今日数据（对照 PRD F1 / F2）。"""
 
 import json
-from datetime import date, datetime, timezone
+from datetime import date, datetime, timedelta, timezone
 from pathlib import Path
 
 from daily_dissect.llm.client import LLMError
@@ -23,12 +23,18 @@ def _entry(repo: str, description: str, *, language: str = "Python") -> RepoCand
     )
 
 
-def _news(title: str, url: str, source: str = "量子位") -> NewsItem:
+def _news(
+    title: str,
+    url: str,
+    source: str = "量子位",
+    *,
+    published: datetime | None = None,
+) -> NewsItem:
     return NewsItem(
         title=title,
         url=url,
         source=source,
-        published=datetime(2026, 11, 17, 1, 0, tzinfo=timezone.utc),
+        published=published or datetime(2026, 11, 17, 1, 0, tzinfo=timezone.utc),
     )
 
 
@@ -223,6 +229,24 @@ def test_dissected_project_not_recommended(tmp_path: Path):
         a["repo"] for a in doc["projects"]["alternates"]
     }
     assert "example/agent-demo" not in chosen
+
+
+def test_prioritize_news_keeps_leadership_piece_when_pool_is_large():
+    from daily_dissect.radar.build import prioritize_news_for_scoring
+
+    base = datetime(2026, 11, 18, 12, 0, tzinfo=timezone.utc)
+    crowd = [
+        _news(f"普通动态 {i}", f"https://ex.com/{i}", published=base - timedelta(hours=i))
+        for i in range(80)
+    ]
+    leader = _news(
+        "李彦宏定义 AI 下一个十年，智能组织是「新厂房」",
+        "http://www.geekpark.net/news/373937",
+        published=base - timedelta(days=5),
+    )
+    chosen = prioritize_news_for_scoring(crowd + [leader], limit=60)
+    assert any("李彦宏" in item.title for item in chosen)
+    assert len(chosen) == 60
 
 
 def test_line_failure_still_writes_other_line(tmp_path: Path):

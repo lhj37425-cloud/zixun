@@ -13,6 +13,9 @@ from daily_dissect.news.models import NewsItem
 
 BEIJING = timezone(timedelta(hours=8))
 
+# 只拉「当前时刻」近 24 小时内的资讯（实时）。
+NEWS_WITHIN_HOURS = 24
+
 
 def _from_struct_time(value: struct_time) -> datetime:
     # feedparser 给的是 UTC 元组
@@ -77,9 +80,9 @@ def filter_recent(
     items: list[NewsItem],
     *,
     now: datetime | None = None,
-    within_hours: int = 24,
+    within_hours: int = NEWS_WITHIN_HOURS,
 ) -> list[NewsItem]:
-    """只保留最近 within_hours 小时内发布的内容。"""
+    """只保留最近 within_hours 小时内发布的内容（默认 24 小时）。"""
     moment = now or datetime.now(timezone.utc)
     if moment.tzinfo is None:
         moment = moment.replace(tzinfo=timezone.utc)

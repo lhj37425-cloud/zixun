@@ -1,75 +1,118 @@
 {
   "date": "2026-11-18",
-  "generated_at": "2026-11-18T14:00:30+08:00",
+  "generated_at": "2026-11-18T17:43:48+08:00",
   "llm": {
     "used": true,
     "model": "deepseek-flash",
-    "calls": 2
+    "calls": 3
   },
   "projects": {
-    "status": "failed",
-    "error": "[WinError 10060] 由于连接方在一段时间后没有正确答复或连接的主机没有反应，连接尝试失败。",
-    "pick": null,
-    "alternates": []
+    "status": "ok",
+    "error": null,
+    "pick": {
+      "repo": "google-labs-code/stitch-skills",
+      "url": "https://github.com/google-labs-code/stitch-skills",
+      "slug": "google-labs-code-stitch-skills",
+      "source": "GitHub Trending",
+      "description": "A library of Agent Skills designed to work with the Stitch MCP server. Each skill follows the Agent Skills open standard, for compatibility with coding agents such as Antigravity, Gemini CLI, Claude Code, Cursor.",
+      "language": "TypeScript",
+      "stars": 10248,
+      "stars_today": 350,
+      "score": 7.75,
+      "one_liner": "Google Labs 开源的一组「Agent 技能包」，每个技能都是一份写给 AI 编码助手看的说明书，配合 Stitch 的 MCP 服务使用。",
+      "solves": "解决「同一个 AI 助手，每次都要重新教会它怎么做某件事」的问题：把做法写成标准格式的技能文件，Antigravity、Gemini CLI、Claude Code、Cursor 等不同助手都能直接读，不用重复教。",
+      "for_you": "这是「Agent Skills 开放标准」的一份现成样板：纯文本、体积小、不用显卡，你可以直接在本机打开看它怎么把一个能力拆成一份说明书。对你转向 FDE 很关键的一点是：能不能把手上的做法写成别人（和别的 agent）能直接复用的技能。",
+      "why_dissect": "今天的首选理由：它同时命中你两件事——一是「不只绑死一个 agent」（技能按开放标准写，换工具不用重写），二是「快速搭原型」（原型里最难复用的部分往往不是代码，而是怎么让 agent 听话）。而且它几乎全是文档，你零基础也能一晚上读完，读完就能照它的结构给自己的项目写一份技能。"
+    },
+    "alternates": [
+      {
+        "repo": "cursor/plugins",
+        "url": "https://github.com/cursor/plugins",
+        "slug": "cursor-plugins",
+        "source": "GitHub Trending",
+        "description": "Cursor plugin specification and official plugins",
+        "language": "TypeScript",
+        "stars": 17028,
+        "stars_today": 201,
+        "score": 7.25,
+        "one_liner": "Cursor 编辑器的插件规范和它官方出的几个插件。",
+        "solves": "解决「编辑器里的 AI 能力是怎么被第三方扩展的」这个疑问——想给某个工具加功能的人，能看到官方定义的接入格式和范例。",
+        "for_you": "帮你建立一个判断：AI 编程工具之间的竞争，很大一部分在「谁能被别人扩展」。以后给客户选工具或解释方案时，能说清「这个工具是封闭的还是能被插件补上的」，比只会说「它补全很快」更有用。"
+      },
+      {
+        "repo": "elementalsouls/Claude-BugHunter",
+        "url": "https://github.com/elementalsouls/Claude-BugHunter",
+        "slug": "elementalsouls-claude-bughunter",
+        "source": "GitHub Trending",
+        "description": "A Claude Code skill bundle for bug hunting and external red-team work - 82 skills, 15 slash commands, 681 disclosed-report patterns curated across 24 core vulnerability classes, plus enterprise identity + infrastructure attack matrices.",
+        "language": "Python",
+        "stars": 10172,
+        "stars_today": 1005,
+        "score": 7.25,
+        "one_liner": "一个面向漏洞挖掘和外部红队（模拟攻击）的 Claude Code 技能合集：82 个技能、15 个斜杠命令，整理了 681 份公开漏洞报告里的套路，覆盖 24 类漏洞，还带企业身份和基础设施的攻击视角。",
+        "solves": "解决「安全测试的知识太散，每次都要从头翻资料」的问题——把某一类活的打法固化成 agent 能直接调用的技能和命令。",
+        "for_you": "它的内容方向是安全测试，和你主线的重合度不高；但它的组织方式很值得看：一个专业领域怎么被切成几十个小技能、再加上几个一键命令。这正是你做 FDE 原型时最缺的那层「怎么把经验整理成 agent 能用的结构」。"
+      }
+    ]
   },
   "news": {
     "status": "ok",
     "error": null,
     "items": [
       {
-        "title": "Agent演示惊艳，一进生产就不好用：SAP直指企业AI落地的最大幻觉",
+        "title": "纳德拉回应微软首次给工程师发「离场费」：Claude Code 让微软措手不及，二十年 IDE 优势半年动摇",
+        "url": "https://www.infoq.cn/article/zUC0vHq9xm3BFHSqQlw3?utm_source=rss&utm_medium=article",
+        "source": "InfoQ 中文",
+        "published": "2026-11-18T21:55:35+08:00",
+        "category": "新能力",
+        "score": 8.8,
+        "what": "纳德拉公开回应微软首次给工程师发「离场费」，并承认 Claude Code 这类工具让微软二十年的 IDE 积累在半年内被动摇。核心结论是：被冲击的不是写代码的速度，而是工具链本身的护城河。",
+        "solves": "澄清「AI 编码工具到底改变了什么」——不是让程序员打字更快，而是让老牌工具二十年攒下的使用习惯和生态优势可能在很短时间内被抹平。",
+        "for_you": "工具层会反复重排，所以别把身家押在「我最熟某个 IDE / 某个 agent」上，多留几条并行的路。对客户讲方案时也别拿「我们用的是某某工具」当卖点，那层优势保质期很短。"
+      },
+      {
+        "title": "Agent 演示惊艳、一进生产就不好用：SAP 直指企业 AI 落地的最大幻觉，从快速部署到统一运营",
         "url": "https://www.infoq.cn/article/AsfcqUsutpSlPIBE1ok9?utm_source=rss&utm_medium=article",
         "source": "InfoQ 中文",
         "published": "2026-11-17T23:00:05+08:00",
         "category": "落地案例",
-        "score": 9.0,
-        "what": "SAP 在公开分享中指出：Agent 演示效果往往很惊艳，但一进入企业生产环境就不好用，并把这一点称为企业 AI 落地时最大的误解。",
-        "solves": "解决企业引入 AI Agent 时「演示通过就等于可以上线」的误判问题，提醒团队提前关注生产环境里的真实约束。",
-        "for_you": "这是 FDE 最核心的一课：客户看的演示和你交付的系统不是一回事。拆项目时，可以专门问一句「它在真实数据、权限和异常情况下还能跑吗」，把这类判断练成习惯。"
+        "score": 8.6,
+        "what": "SAP 指出企业 AI 最大的幻觉是「演示很惊艳、一进生产就不好用」，并主张重心要从「快速部署一个 agent」转到「统一运营」——上线之后谁管权限、数据、监控、出错回滚。",
+        "solves": "澄清客户那句「AI 好像没什么用」背后的真实原因：不是模型不行，而是从演示到生产之间的那一段（运维、数据、责任）没人接。",
+        "for_you": "以后做原型，从一开始就多花十分钟想三件事：上线后谁维护、数据从哪来、出错怎么发现。能把这三句讲清楚，往往比多做一个炫技功能更容易让客户点头。"
       },
       {
-        "title": "OpenAI 发布 GPT-6.2 Astra 与 Sol",
-        "url": "https://www.qbitai.com/2026/11/510707.html",
-        "source": "量子位",
-        "published": "2026-11-18T08:49:14+08:00",
-        "category": "新能力",
-        "score": 8.5,
-        "what": "据该报道，OpenAI 发布了 GPT-6.2 的两个版本 Astra 与 Sol；输入里没有更多细节，具体能力与差异需要自行查看原文。",
-        "solves": "面向需要跟进模型能力更新的开发者和产品方，提供新的可选模型。",
-        "for_you": "知道有这回事即可，不必马上升级。真正值得留意的是：新模型出来后，你拆过的 agent 项目里哪些环节可以换掉、成本会不会变化。"
-      },
-      {
-        "title": "从 SDLC 到 ADLC：宝洁的 AI 原生组织实验",
-        "url": "https://www.infoq.cn/article/prRYMYmhOvSY9EaMz8Oc?utm_source=rss&utm_medium=article",
+        "title": "谷歌 SRE 圣经被迫重写：AI 时代硬技能在塌陷，第一性原理在升值",
+        "url": "https://www.infoq.cn/article/draE95cYeLAqhcR3CwIF?utm_source=rss&utm_medium=article",
         "source": "InfoQ 中文",
-        "published": "2026-11-17T18:15:13+08:00",
+        "published": "2026-11-18T21:39:49+08:00",
         "category": "落地案例",
+        "score": 8.3,
+        "what": "谷歌的 SRE 体系（业界常说的「SRE 圣经」）因为 AI 被迫重写；文章的判断是：靠记忆和套路的硬技能在贬值，能回到第一性原理判断问题的人在升值。",
+        "solves": "澄清「我该把时间补在哪」——不是补更多命令和框架细节，而是补「这件事本质是什么、哪里最可能坏」的判断力。",
+        "for_you": "每天 5 小时里，建议留一块给「想明白」而不是「记住」。面对客户时，能问出对的问题、能判断这个场景到底该不该用 AI，比会背术语更接近 FDE 的核心。"
+      },
+      {
+        "title": "800 个 MCP Server、5000 个工具，AI 智能体的「微服务危机」来了",
+        "url": "https://www.infoq.cn/article/FrDlAvNIwkr8ttdvWMCC?utm_source=rss&utm_medium=article",
+        "source": "InfoQ 中文",
+        "published": "2026-11-18T22:00:00+08:00",
+        "category": "新工具",
+        "score": 8.2,
+        "what": "MCP Server 已到 800 个量级、工具总数约 5000，文章把这种局面叫智能体的「微服务危机」：工具一多，怎么选、怎么治理、怎么保证选对，成了新难题。",
+        "solves": "澄清一个常见误解——工具不是越多越好。工具集膨胀后，agent 选错工具、维护成本失控的风险会先于能力提升到来。",
+        "for_you": "给客户搭 agent 时，工具宁可少而准：一个 agent 只给 5 个真正相关的工具，比塞 50 个更容易稳定。你能解释「为什么只给这几个」，就是很实在的专业度。"
+      },
+      {
+        "title": "GPT‑6.2 Astra 与 Sol 发布：官方能力说明与实测（含「有点冤」的差评复盘）",
+        "url": "https://www.ifanr.com/1690103?utm_source=rss&utm_medium=rss&utm_campaign=",
+        "source": "爱范儿",
+        "published": "2026-11-18T10:39:15+08:00",
+        "category": "新能力",
         "score": 8.0,
-        "what": "宝洁分享了从传统 SDLC（软件开发流程）转向 ADLC（AI 原生开发流程）的组织实验，讲的是流程和团队怎么改，而不只是换工具。",
-        "solves": "解决企业「买了 AI 工具但开发流程没变、收益有限」的问题。",
-        "for_you": "FDE 落地时，一半工作是把客户的流程改对。这篇能帮你理解「流程改造」长什么样，跟客户沟通时不只谈技术，还能谈协作方式。"
-      },
-      {
-        "title": "谷歌公布已发现 500 多个 XSS 漏洞的 AI 安全代理 PageBreak",
-        "url": "https://www.infoq.cn/article/uGTol3TSzOV72NSrcBrB?utm_source=rss&utm_medium=article",
-        "source": "InfoQ 中文",
-        "published": "2026-11-18T19:00:00+08:00",
-        "category": "新工具",
-        "score": 7.8,
-        "what": "谷歌公布了一个叫 PageBreak 的 AI 安全代理，据称已发现 500 多个 XSS（网页脚本注入）漏洞。",
-        "solves": "帮助安全团队用 AI 代理批量排查网页安全漏洞，减少人工审计的负担。",
-        "for_you": "这是一个「AI 代理 + 明确任务 + 可验证结果」的好样例：漏洞是否真实存在，可以验证。适合当拆解对象，看它怎么把大任务拆成可执行的检查步骤。"
-      },
-      {
-        "title": "GitHub 让 AI 接管工作流，单次默认预算 10 美元：是不是太大方了？",
-        "url": "https://www.infoq.cn/article/lMs1bM1muspglUjMr1l3?utm_source=rss&utm_medium=article",
-        "source": "InfoQ 中文",
-        "published": "2026-11-18T16:00:00+08:00",
-        "category": "新工具",
-        "score": 7.8,
-        "what": "GitHub 让 AI 接管部分工作流，并给单次任务设了默认 10 美元的预算上限，引发「这个额度是否太大方」的讨论。",
-        "solves": "解决 AI 自动执行任务时成本失控的担忧，用预算上限给自动化加一道限制。",
-        "for_you": "很实用的一点：给 agent 设成本上限，是把它交付给客户前必须做的事。你在意 token 成本，这条正好可以当「怎么给代理定预算」的参考案例。"
+        "what": "GPT-6.2 的 Astra 与 Sol 两个版本发布，有官方能力说明，也有第三方实测；其中一篇差评被复盘认为「有点冤」，也就是评测方式本身可能不公平。",
+        "solves": "澄清「新模型到底强在哪、弱在哪」这个选型困惑，同时提醒：一次差评或一次高分，常常反映的是评测设置，而不是模型真实边界。",
+        "for_you": "看到新模型发布，先分清三种材料：官方说明、第三方实测、情绪化评价。给客户做选型时，用自己业务里的一个小任务跑一遍，比跟着榜单和热搜下结论可靠得多。"
       }
     ]
   }

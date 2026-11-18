@@ -9,13 +9,27 @@ PROMPTS = ROOT / "prompts"
 
 
 def test_prompt_files_exist_and_are_readable():
-    for name in ("profile", "score_projects", "score_news"):
+    for name in ("profile", "score_projects", "score_news", "dissect"):
         path = prompt_path(name)
         assert path.is_file(), path
         text = load_prompt(name)
         assert len(text) > 100
         # 用户要读得懂：用中文写，少堆术语标题
         assert any("\u4e00" <= ch <= "\u9fff" for ch in text)
+
+
+def test_dissect_covers_four_steps_paths_and_resume():
+    text = load_prompt("dissect")
+    for name in ("01-overview.md", "02-flows.md", "03-run.md", "04-qa.md"):
+        assert name in text
+    assert "<!-- 待完成 -->" in text
+    assert "content/projects/" in text
+    assert "glossary.md" in text
+    assert "sandbox/" in text
+    assert "继续拆解" in text or "接着做" in text
+    assert "一页纸" in text and "流程图" in text and "跑起来" in text and "追问" in text
+    assert "uv run dd build" in text
+    assert "零基础" in text or "听得懂" in text
 
 
 def test_profile_covers_learner_and_goal():

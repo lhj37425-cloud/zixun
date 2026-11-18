@@ -103,9 +103,9 @@
 ### 3.7 agent 连接
 
 - **规则**：`AGENTS.md` 写开发规则；`CLAUDE.md` 用一行 `@AGENTS.md` 引用它；TRAE 的 `.trae/rules/project_rules.md` 用一句话指向它（格式在 B-5.6 用 TRAE 实测）。
-- **拆解说明**：`prompts/dissect.md`，在 B-5.1 写。
+- **拆解说明**：`prompts/dissect.md`（B-5.1，已建）。
 - **复制的指令**："请按照 prompts/dissect.md 拆解 https://github.com/作者/项目名"。
-- **agent 拆解时要做的事**（详细写在 `prompts/dissect.md`）：用 `uv run dd new-project <仓库>` 建项目文件夹；把对方的项目下载到 `sandbox/`；按四步写文件；新概念写进术语表；最后运行 `uv run dd build` 重新生成网页。命令名是计划，开发时以实际为准。
+- **agent 拆解时要做的事**（详细写在 `prompts/dissect.md`）：用 `uv run dd new-project <仓库>` 建项目文件夹（命令在 B-5.2；没有时按 TECH 5.3 手建）；把对方的项目下载到 `sandbox/`；按四步写文件；新概念写进术语表；每步结束后运行 `uv run dd build` 重新生成网页。
 
 ## 4. 项目结构
 
@@ -176,7 +176,7 @@ daily-dissect/
 │  ├─ score-projects.md    # 项目线打分标准（B-4.4，已建）
 │  ├─ score-news.md        # 资讯线打分和分栏标准（B-4.4，已建）
 │  ├─ write.md             # 给入选项目/资讯写说明（B-4.5，已建）
-│  └─ dissect.md           # 拆解四步法（B-5.1）
+│  └─ dissect.md           # 拆解四步法（B-5.1，已建）
 ├─ content/
 │  ├─ daily/               # 每天一份今日数据（B-3.2，已放示例）
 │  ├─ projects/            # 每个拆解项目一个文件夹（B-3.2，已放示例）

@@ -11,11 +11,12 @@ PROMPT_FILES = {
     "score_projects": "score-projects.md",
     "score_news": "score-news.md",
     "write": "write.md",
+    "dissect": "dissect.md",
 }
 
 
 def prompt_path(name: str, *, root: Path | None = None) -> Path:
-    """按逻辑名返回说明文件路径。name: profile / score_projects / score_news。"""
+    """按逻辑名返回说明文件路径。name: profile / score_projects / score_news / write / dissect。"""
     try:
         filename = PROMPT_FILES[name]
     except KeyError as error:

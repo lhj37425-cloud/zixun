@@ -36,9 +36,13 @@ def slug_of(repo: str) -> str:
     return repo.lower().replace("/", "-")
 
 
+# B-5.3 定稿：按钮复制的整句指令。改这里等于改产品约定，网页与测试会一起变。
+DISSECT_INSTRUCTION_TEMPLATE = "请按照 prompts/dissect.md 拆解 {url}"
+
+
 def dissect_instruction(url: str) -> str:
-    """"开始拆解""继续拆解"按钮复制的那句话。"""
-    return f"请按照 prompts/dissect.md 拆解 {url}"
+    """「开始拆解」「继续拆解」复制到剪贴板的那句话（PRD F4 / TECH 3.7）。"""
+    return DISSECT_INSTRUCTION_TEMPLATE.format(url=url.strip())
 
 
 def day_text(d: date) -> str:

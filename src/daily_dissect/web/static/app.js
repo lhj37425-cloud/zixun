@@ -1,17 +1,18 @@
-// 今日一拆 · 页面脚本（原型）
-// 只做一件事：点"开始拆解"或"继续拆解"时，把按钮上 data-copy 里的指令复制到剪贴板。
+// 今日一拆 · 页面脚本
+// 只做一件事：点「开始拆解」或「继续拆解」时，把 data-copy 里的整句指令复制到剪贴板。
+// 定稿格式：请按照 prompts/dissect.md 拆解 https://github.com/作者/项目名
 
 async function copyText(text) {
-  // 电脑上用 localhost 打开时，浏览器的剪贴板接口可以用
+  // https / localhost 等安全上下文优先用 Clipboard API
   if (navigator.clipboard && window.isSecureContext) {
     try {
       await navigator.clipboard.writeText(text);
       return true;
     } catch (err) {
-      // 被浏览器拒绝时，换下面的兼容写法
+      // 被拒绝时走下面的兼容写法
     }
   }
-  // 手机通过局域网 http 打开时，剪贴板接口用不了：用一个看不见的文本框来复制
+  // file:// 打开本地网页时通常不是安全上下文：用看不见的文本框 + execCommand
   const box = document.createElement("textarea");
   box.value = text;
   box.setAttribute("readonly", "");

@@ -30,7 +30,7 @@
   {# 没拆完才显示这个按钮；四步都完成后不显示 #}
   <div class="actions">
     {{ ui.copy_button(project.instruction, "继续拆解", primary=true) }}
-    <p class="copy-hint">会复制：<code>{{ project.instruction }}</code>，agent 会从"{{ project.next_step.name }}"接着做</p>
+    <p class="copy-hint">会复制整句指令：<code>{{ project.instruction }}</code>。粘贴给 agent 后，会从「{{ project.next_step.name }}」接着做。</p>
   </div>
   {% endif %}
 </div>

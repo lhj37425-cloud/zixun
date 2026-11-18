@@ -49,6 +49,20 @@ def test_today_page(site):
     assert "已完成 2/4，看拆解" in html
     assert '<span class="btn-label">继续拆解</span>' in html
     assert html.count('<span class="btn-label">开始拆解</span>') == 2
+    # B-5.3：复制指令定稿（主推继续拆 + 两个备选开始拆）
+    assert (
+        'data-copy="请按照 prompts/dissect.md 拆解 https://github.com/example/agent-demo"'
+        in html
+    )
+    assert (
+        'data-copy="请按照 prompts/dissect.md 拆解 https://github.com/example/prompt-lab"'
+        in html
+    )
+    assert (
+        'data-copy="请按照 prompts/dissect.md 拆解 https://github.com/example/browser-pilot"'
+        in html
+    )
+    assert "assets/app.js" in html
     assert html.count('class="card news-item"') == 5
     assert "今天 07:30" in html and "昨天 22:40" in html
     assert "解读由 DeepSeek（deepseek-chat）生成，调用 3 次" in html
@@ -96,9 +110,14 @@ def test_project_page(site):
     assert "<h3>解决谁的什么问题</h3>" in html
     assert html.count('<pre class="mermaid">') == 2
     assert '<script src="../assets/vendor/mermaid.min.js"></script>' in html
-    # 没拆完：有"继续拆解"按钮，提示从"跑起来"接着做
+    # 没拆完：有"继续拆解"按钮，提示从"跑起来"接着做；指令与今日页同一句定稿
     assert '<span class="btn-label">继续拆解</span>' in html
-    assert 'agent 会从"跑起来"接着做' in html
+    assert (
+        'data-copy="请按照 prompts/dissect.md 拆解 https://github.com/example/agent-demo"'
+        in html
+    )
+    assert "会从「跑起来」接着做" in html
+    assert "assets/app.js" in html
     assert html.count('class="empty-step"') == 2
     assert html.count("想接着拆，点页面上方的") == 1
 

@@ -90,7 +90,7 @@
     {% if not pick.finished %}
     <div class="actions">
       {{ ui.copy_button(pick.instruction, pick.button_label, primary=true) }}
-      <p class="copy-hint">会复制：<code>{{ pick.instruction }}</code></p>
+      <p class="copy-hint">会复制整句指令：<code>{{ pick.instruction }}</code>。粘贴给 Claude Code 或 TRAE 即可，不用再解释。</p>
     </div>
     {% endif %}
   </article>

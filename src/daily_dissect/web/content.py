@@ -139,7 +139,9 @@ def load_projects(projects_dir: Path, md: MarkdownIt | None = None) -> list[Proj
         for number, (filename, name, pending_text) in enumerate(STEPS, start=1):
             path = folder / filename
             text = path.read_text(encoding="utf-8") if path.exists() else ""
-            done = bool(text.strip()) and TODO_MARK not in text
+            # 整行等于标记才算未完成；正文里提到「待完成」不算。
+            has_todo_line = any(line.strip() == TODO_MARK for line in text.splitlines())
+            done = bool(text.strip()) and not has_todo_line
             if number == 1 and done:
                 overview_text = text
             steps.append(

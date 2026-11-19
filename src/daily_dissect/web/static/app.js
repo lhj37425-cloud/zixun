@@ -64,3 +64,85 @@ document.addEventListener("click", async (event) => {
     button.classList.remove("is-copied");
   }, 2500);
 });
+
+// ---------- 日期切换 + 手动抓取 ----------
+// 翻看已有日期不需要服务；只有「抓取这一天」要连本机服务（scripts/serve.bat）。
+const tools = document.querySelector(".day-tools");
+
+if (tools) {
+  const indexBox = document.getElementById("day-index");
+  const index = indexBox ? JSON.parse(indexBox.textContent) : { days: [], latest: "" };
+  const root = tools.dataset.root || "";
+  const dateInput = document.getElementById("jump-date");
+  const fetchButton = document.getElementById("fetch-day");
+  const fetchStatus = document.getElementById("fetch-status");
+  const days = new Set(index.days || []);
+  const latest = index.latest || "";
+  const served = location.protocol === "http:" || location.protocol === "https:";
+
+  const say = (text) => {
+    fetchStatus.textContent = text;
+  };
+  const hrefFor = (value) =>
+    value === latest ? root + "index.html" : root + "daily/" + value + ".html";
+
+  if (served) {
+    say("可以抓取。这天已有数据的话，旧文件会先备份到 data/backup/。");
+  } else {
+    say("翻看不需要服务；抓取要先双击 scripts\\serve.bat（或运行 uv run dd serve --open）。");
+  }
+
+  dateInput.addEventListener("change", () => {
+    const value = dateInput.value;
+    if (!value) return;
+    if (days.has(value)) {
+      window.location.href = hrefFor(value);
+      return;
+    }
+    say(value + " 还没有数据。点「抓取这一天」补抓，历史日期只补资讯。");
+  });
+
+  fetchButton.addEventListener("click", async () => {
+    const value = dateInput.value;
+    if (!value) {
+      say("先选一个日期。");
+      return;
+    }
+    if (!served) {
+      say("页面是双击打开的，抓取要先启动本地服务：双击 scripts\\serve.bat。");
+      return;
+    }
+    if (value > latest) {
+      say("不能抓未来的日期。");
+      return;
+    }
+    if (days.has(value) && !window.confirm(value + " 已经有数据，重抓会覆盖。旧文件会备份到 data/backup/，继续吗？")) {
+      return;
+    }
+
+    const original = fetchButton.textContent;
+    fetchButton.disabled = true;
+    fetchButton.textContent = "抓取中…";
+    say("正在抓取，可能要 1～2 分钟，别关页面。");
+
+    try {
+      const response = await fetch("/api/radar", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ date: value }),
+      });
+      const result = await response.json().catch(() => ({ ok: false, error: "服务返回的内容看不懂" }));
+      if (!response.ok || !result.ok) {
+        say("没抓成功：" + (result.error || "HTTP " + response.status));
+        return;
+      }
+      say(result.backfill ? "补抓完成（历史日期只补资讯），正在打开…" : "抓取完成，正在打开…");
+      window.location.href = hrefFor(value);
+    } catch (error) {
+      say("没连上本地服务：" + error.message);
+    } finally {
+      fetchButton.disabled = false;
+      fetchButton.textContent = original;
+    }
+  });
+}

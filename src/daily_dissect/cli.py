@@ -5,6 +5,7 @@
 - open：生成网页，再用浏览器打开今日页（平时直接双击 site/index.html 也一样）
 - radar：跑一次每日工作流，挑选并写入今日数据
 - update：radar + build（双击 scripts/update*.bat 会调用它）
+- serve：在本机起一个小服务，网页里可以按日期手动抓取
 - new-project：为要拆的仓库建 content/projects/ 文件夹和四步模板
 """
 
@@ -47,6 +48,17 @@ def build_parser() -> argparse.ArgumentParser:
         "--open",
         action="store_true",
         help="完成后用浏览器打开今日页",
+    )
+
+    serve_cmd = commands.add_parser(
+        "serve",
+        help="在本机起一个小服务：浏览网页，并手动按日期抓取",
+    )
+    serve_cmd.add_argument("--port", type=int, default=8765, help="端口，默认 8765")
+    serve_cmd.add_argument(
+        "--open",
+        action="store_true",
+        help="启动后用浏览器打开",
     )
 
     new_project = commands.add_parser(
@@ -144,6 +156,18 @@ def run_update(only: str | None, open_browser: bool) -> int:
     return code
 
 
+def run_serve(port: int, open_browser: bool) -> int:
+    from daily_dissect.server import serve
+
+    try:
+        serve(port=port, open_browser=open_browser)
+    except OSError as error:
+        print(f"没能启动本地服务：{error}")
+        print("端口可能被占用了，可以换一个：uv run dd serve --port 8766")
+        return 1
+    return 0
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = build_parser()
     args = parser.parse_args(argv)
@@ -157,6 +181,8 @@ def main(argv: list[str] | None = None) -> int:
         return run_update(args.only, args.open)
     if args.command == "new-project":
         return run_new_project(args.repo)
+    if args.command == "serve":
+        return run_serve(args.port, args.open)
     parser.print_help()
     return 0
 

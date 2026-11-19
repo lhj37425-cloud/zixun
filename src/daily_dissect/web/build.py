@@ -66,6 +66,12 @@ def build_site(content_dir: Path | None = None, out_dir: Path | None = None) -> 
     days = load_days(content / "daily", projects)
     terms = load_glossary(content / "glossary.md", projects)
 
+    # 页头日期选择器用：哪些天有数据、最新是哪天
+    day_index = {
+        "days": [day.date.isoformat() for day in days],
+        "latest": days[0].date.isoformat() if days else "",
+    }
+
     prepare_out_dir(out)
     env = make_env()
     report = BuildReport(out_dir=out)
@@ -73,7 +79,7 @@ def build_site(content_dir: Path | None = None, out_dir: Path | None = None) -> 
     def write(rel_path: str, template: str, **context) -> None:
         # 子文件夹里的页面要用 ../ 才能找到 assets/ 和其他页面
         root = "../" * rel_path.count("/")
-        html = env.get_template(template).render(root=root, **context)
+        html = env.get_template(template).render(root=root, day_index=day_index, **context)
         target = out / rel_path
         target.parent.mkdir(parents=True, exist_ok=True)
         target.write_text(html, encoding="utf-8")

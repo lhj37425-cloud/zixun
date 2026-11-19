@@ -246,6 +246,7 @@ class DayPage:
     news_ok: bool
     news_error: str
     news: list[NewsCard]
+    backfill: bool = False
 
     @property
     def date_text(self) -> str:
@@ -415,6 +416,7 @@ def load_days(daily_dir: Path, projects: list[Project]) -> list[DayPage]:
                 news_ok=news_ok,
                 news_error=news_line.get("error") or "",
                 news=[_news_card(item, page_date, is_latest) for item in news_line.get("items") or []] if news_ok else [],
+                backfill=bool(data.get("backfill")),
             )
         )
     return days

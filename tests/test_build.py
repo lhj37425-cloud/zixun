@@ -82,7 +82,7 @@ def test_past_day_page_shows_failures(site):
     assert "资讯线这天没抓到" in html
     assert "资讯线失败" in html
     assert "当天 +87" in html
-    assert 'href="../assets/style.css?v=20261118-github-palette"' in html
+    assert 'href="../assets/style.css?v=20261119-day-tools"' in html
     assert 'aria-current="page">往期</a>' in html
 
 

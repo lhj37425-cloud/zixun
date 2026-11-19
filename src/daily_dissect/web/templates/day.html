@@ -18,6 +18,15 @@
 {% endblock %}
 
 {% block before_main %}
+{% if day is not none %}
+<div class="day-tools" data-root="{{ root }}">
+  <label class="day-tools-label" for="jump-date">看哪一天</label>
+  <input class="day-tools-date" type="date" id="jump-date" value="{{ day.date.isoformat() }}" max="{{ day_index.latest }}">
+  <button class="btn day-tools-btn" type="button" id="fetch-day">抓取这一天</button>
+  <p class="day-tools-status" id="fetch-status" role="status" aria-live="polite"></p>
+</div>
+<script type="application/json" id="day-index">{{ day_index|tojson }}</script>
+{% endif %}
 {% if day is not none and not day.is_latest %}
 <nav class="breadcrumb" aria-label="当前位置">
   <ol>
@@ -52,7 +61,11 @@
   </div>
 
   {% if not day.projects_ok %}
+  {% if day.backfill %}
+  {{ ui.callout("这一天只能补资讯", ["项目线没法补：GitHub Trending 只有当下的榜单，没有那一天的快照。", "下面显示的是按这一天筛出来的资讯；项目请回今天页看。"]) }}
+  {% else %}
   {{ ui.callout("项目线" ~ day.when ~ "没抓到", ["原因：" ~ day.projects_error, "资讯线不受影响。手动更新做好以后（第 6 步），可以单独重跑项目线。"], "danger") }}
+  {% endif %}
   {% else %}
   {% if not day.llm_used %}
   {{ ui.callout(day.when ~ "没用上 DeepSeek，所以没有中文解读", ["下面的项目只显示原始简介，是按关键词规则挑出来的。配好 API Key 之后，第二天就会恢复。"]) }}

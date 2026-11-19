@@ -1,0 +1,119 @@
+{
+  "date": "2026-11-19",
+  "generated_at": "2026-11-19T14:55:29+08:00",
+  "llm": {
+    "used": true,
+    "model": "deepseek-flash",
+    "calls": 3
+  },
+  "projects": {
+    "status": "ok",
+    "error": null,
+    "pick": {
+      "repo": "cursor/plugins",
+      "url": "https://github.com/cursor/plugins",
+      "slug": "cursor-plugins",
+      "source": "GitHub Trending",
+      "description": "Cursor plugin specification and official plugins",
+      "language": "TypeScript",
+      "stars": 17324,
+      "stars_today": 314,
+      "score": 7.5,
+      "one_liner": "Cursor 官方放出的插件规范和一组成品插件示例，告诉你怎样把一套工作流打包成编辑器里随手可用的能力。",
+      "solves": "解决“每次都要重新跟 AI 讲一遍同样的要求”的麻烦——把重复的提示和流程固化成插件，谁用都一致。",
+      "for_you": "你主要靠 AI 写代码，最该积累的其实不是语法，而是“把要求说清楚并固定下来”的模板。这类规范体积小、不用显卡，看几个官方例子就能明白一个 AI 编程工具的能力是怎么被扩展出来的。",
+      "why_dissect": "主推它有两个原因：一是够小，本机能跟着跑、能改；二是它正好处在“agent 与工具如何被组织”这条线上，看懂插件的输入输出，你就摸到了 AI 编程产品形态的骨架，对以后给客户搭演示原型很有用。"
+    },
+    "alternates": [
+      {
+        "repo": "HKUDS/CLI-Anything",
+        "url": "https://github.com/HKUDS/CLI-Anything",
+        "slug": "hkuds-cli-anything",
+        "source": "GitHub Trending",
+        "description": "\"CLI-Anything: Making ALL Software Agent-Native\" -- CLI-Hub: https://clianything.cc/",
+        "language": "Python",
+        "stars": 59997,
+        "stars_today": 389,
+        "score": 7.4,
+        "one_liner": "一个主张“让所有软件都能被 agent 直接调用”的项目，配套一个命令行工具入口（CLI-Hub）。",
+        "solves": "解决“AI 想操作某个软件，却没有接口可用”的问题——把软件的命令行能力整理成 agent 能理解、能调用的形式。",
+        "for_you": "做 FDE 经常要把客户已有的系统接上 AI。命令行是最朴素也最通用的对接方式，理解“命令 → 参数 → 返回结果”这套约定，比记框架名字更值钱。"
+      },
+      {
+        "repo": "Inginnng/EditHere",
+        "url": "https://github.com/Inginnng/EditHere",
+        "slug": "inginnng-edithere",
+        "source": "HelloGitHub 第 127 期 · C++ 项目",
+        "description": "用截图告诉 AI 界面该怎么改。这是一款面向 AI 编程的截图批注工具，可以把具体怎么改整理成 AI 能直接读取的 JSON。支持悬停识别界面元素、点和框批注、拖动组件调整布局、暂停视频按帧批注，以及 OCR 和长截图，所有处理均在本地完成。",
+        "language": null,
+        "stars": null,
+        "stars_today": null,
+        "score": 7.25,
+        "one_liner": "截图批注工具：在界面上圈一圈、点一下、拖一下，把“这里该怎么改”整理成 AI 能直接读的 JSON。",
+        "solves": "解决“用文字描述界面改动说不清”的问题——尤其对前端和 UI 调整，画一下比写一百字准确。",
+        "for_you": "它把“人怎么表达意图”和“AI 怎么接收指令”之间的翻译做成了工具，这正是原型演示里最容易出彩的一环。项目不大、本地处理，装起来门槛低。"
+      }
+    ]
+  },
+  "news": {
+    "status": "ok",
+    "error": null,
+    "items": [
+      {
+        "title": "纳德拉回应微软首次给工程师发“离场费”：Claude Code 让微软措手不及，二十年 IDE 优势半年动摇",
+        "url": "https://www.infoq.cn/article/zUC0vHq9xm3BFHSqQlw3?utm_source=rss&utm_medium=article",
+        "source": "InfoQ 中文",
+        "published": "2026-11-18T21:55:35+08:00",
+        "category": "新能力",
+        "score": 9.0,
+        "what": "微软 CEO 纳德拉回应公司首次给工程师发“离场费”时说：Claude Code 让微软措手不及，二十年积累的 IDE 优势在半年内就动摇了。",
+        "solves": "澄清一个困惑：AI 编程工具的领先地位到底稳不稳。结论是——连微软这种做了二十年开发工具的玩家，也可能被新形态在短时间内追上。",
+        "for_you": "别把身家押在“精通某一个工具”上。客户方案里也不要默认某家工具永远领先，把精力放在“怎么把需求讲清楚、怎么验收结果”这类不随工具变化的能力上。"
+      },
+      {
+        "title": "GPT-6.2 发布：跑分更强、价格更低，但实测“强是真强、难用也是真难用”",
+        "url": "http://www.geekpark.net/news/374175",
+        "source": "极客公园",
+        "published": "2026-11-18T21:40:28+08:00",
+        "category": "新能力",
+        "score": 8.0,
+        "what": "GPT-6.2 发布，跑分更强、价格更低，但实测反馈是“强是真强，难用也是真难用”。",
+        "solves": "澄清“跑分高就等于好用”这个误解：模型能力和实际可用性之间有落差，边界往往卡在使用方式和任务匹配上。",
+        "for_you": "给客户做方案时，别拿榜单当卖点。更稳的做法是拿客户真实的一两个任务先跑一遍，再决定用哪个模型、怎么包一层提示或流程让它变好用。"
+      },
+      {
+        "title": "从 AI 试点到规模化生产：Snowflake 驻场前沿工程师如何助力企业实现 AI 落地",
+        "url": "https://www.infoq.cn/article/ZukzUBeu7k74T9UGCkfh?utm_source=rss&utm_medium=article",
+        "source": "InfoQ 中文",
+        "published": "2026-11-19T02:44:20+08:00",
+        "category": "落地案例",
+        "score": 8.0,
+        "what": "介绍 Snowflake 的“驻场前沿工程师”如何帮企业把 AI 从试点推进到规模化生产。",
+        "solves": "澄清 FDE 这类角色在企业里到底干什么：不是写论文，而是把试点阶段跑通的东西，变成能在生产环境稳定运行的方案。",
+        "for_you": "这就是你的目标岗位的日常。可以对照着调整学习重心：多练“把一个 demo 补成别人敢用的东西”——包括数据从哪来、出错怎么办、谁来维护，而不只是让 demo 跑通一次。"
+      },
+      {
+        "title": "800 个 MCP Server、5000 个工具，AI 智能体的“微服务危机”来了",
+        "url": "https://www.infoq.cn/article/FrDlAvNIwkr8ttdvWMCC?utm_source=rss&utm_medium=article",
+        "source": "InfoQ 中文",
+        "published": "2026-11-18T22:00:00+08:00",
+        "category": "新工具",
+        "score": 7.5,
+        "what": "有观察指出，MCP Server 已多达约 800 个、工具约 5000 个，AI 智能体开始出现类似“微服务危机”的问题：工具太多、选不准、管不住。",
+        "solves": "澄清一个落地困惑：工具越多是不是越好。答案偏向反面——工具爆炸会带来选择、治理和上下文成本，盲目堆接口反而拖累效果。",
+        "for_you": "给客户设计方案时，别一上来就接一堆工具。先挑少数几个真正解决问题的，把每个工具的说明和边界写清楚，这样既省 token，也更容易排查问题。"
+      },
+      {
+        "title": "谷歌 SRE 圣经被迫重写：AI 时代，硬技能在塌陷，第一性原理在升值",
+        "url": "https://www.infoq.cn/article/draE95cYeLAqhcR3CwIF?utm_source=rss&utm_medium=article",
+        "source": "InfoQ 中文",
+        "published": "2026-11-18T21:39:49+08:00",
+        "category": "落地案例",
+        "score": 7.5,
+        "what": "谷歌 SRE 那本被当作“圣经”的书面临重写，原因是 AI 时代很多硬技能在快速贬值，而第一性原理式的判断能力在升值。",
+        "solves": "澄清“现在该学什么才不过时”：具体操作技能半衰期在缩短，能拆解问题、判断根因的思维方式更保值。",
+        "for_you": "你编程基础少，这其实是好消息——不用跟人比记语法和背命令。把时间花在“这个系统为什么会这样”“这个方案哪里会先崩”上，这类判断在客户现场最难被替代。"
+      }
+    ]
+  }
+}

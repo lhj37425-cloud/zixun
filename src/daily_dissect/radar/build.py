@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import shutil
 from dataclasses import dataclass
 from datetime import date, datetime, timedelta, timezone
 from pathlib import Path
@@ -22,7 +23,7 @@ from daily_dissect.llm.pipeline import (
 )
 from daily_dissect.llm.types import NewsBlurb, ProjectBlurb
 from daily_dissect.news.models import NewsItem
-from daily_dissect.paths import CONTENT_DIR
+from daily_dissect.paths import BACKUP_DIR, CONTENT_DIR
 from daily_dissect.projects.pool import ProjectPool
 from daily_dissect.radar.select import (
     RankedNews,
@@ -192,6 +193,7 @@ def build_daily(
     today: date | None = None,
     projects_error: str | None = None,
     news_error: str | None = None,
+    backfill: bool = False,
 ) -> dict[str, Any]:
     """根据项目池和资讯列表，挑选并生成今日文档（不写盘）。"""
     day = today or _today()
@@ -323,6 +325,7 @@ def build_daily(
 
     return {
         "date": day_text,
+        "backfill": backfill,
         "generated_at": _iso_now(),
         "llm": {"used": llm_used, "model": llm_model or None, "calls": llm_calls},
         "projects": projects_block,
@@ -330,9 +333,19 @@ def build_daily(
     }
 
 
-def save_daily(document: dict[str, Any], daily_dir: Path | None = None) -> Path:
+def save_daily(
+    document: dict[str, Any],
+    daily_dir: Path | None = None,
+    backup_dir: Path | None = None,
+) -> Path:
     folder = daily_dir or (CONTENT_DIR / "daily")
     folder.mkdir(parents=True, exist_ok=True)
     path = folder / f"{document['date']}.json"
+    if path.exists():
+        # 覆盖前先备份，手动重抓时旧内容还能找回来
+        backups = backup_dir or BACKUP_DIR
+        backups.mkdir(parents=True, exist_ok=True)
+        stamp = datetime.now(BEIJING).strftime("%Y%m%d-%H%M%S")
+        shutil.copy2(path, backups / f"{document['date']}-{stamp}.json")
     path.write_text(json.dumps(document, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     return path

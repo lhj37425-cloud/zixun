@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from dataclasses import dataclass
-from datetime import date
+from datetime import date, datetime, timedelta, timezone
 from pathlib import Path
 from typing import Callable
 
@@ -16,7 +16,7 @@ from daily_dissect.paths import CONTENT_DIR, POOL_FILE
 from daily_dissect.projects.fetch import fetch_hellogithub_issue, fetch_trending_html
 from daily_dissect.projects.pool import ProjectPool, load_pool, save_pool
 from daily_dissect.projects.sync import ingest_hellogithub, ingest_trending
-from daily_dissect.radar.build import build_daily, save_daily
+from daily_dissect.radar.build import BEIJING, build_daily, save_daily
 from daily_dissect.sources import Sources, load_sources
 
 _MISSING = object()
@@ -32,6 +32,7 @@ class RadarReport:
     pool_path: Path
     projects_ok: bool
     news_ok: bool
+    backfill: bool = False
 
 
 def _make_client() -> LLMClient | None:
@@ -68,10 +69,13 @@ def fetch_projects_line(
         return str(error) or error.__class__.__name__
 
 
-def fetch_news_line(sources: Sources) -> tuple[list[NewsItem], str | None]:
+def fetch_news_line(
+    sources: Sources,
+    for_date: date | None = None,
+) -> tuple[list[NewsItem], str | None]:
     """抓取资讯线。单个源失败不影响整条线；全部失败才记错误。"""
     try:
-        fetched = collect_news(sources.news)
+        fetched = collect_news(sources.news, for_date=for_date)
         items = list(fetched.items)
         enabled = [s for s in sources.news if s.enabled]
         if enabled and not items and len(fetched.failures) >= len(enabled):
@@ -87,6 +91,7 @@ def run_radar(
     only: str | None = None,
     client: object = _MISSING,
     today: date | None = None,
+    backfill: bool = False,
     content_dir: Path | None = None,
     pool_path: Path | None = None,
     projects_fetcher: ProjectsFetcher | None = None,
@@ -94,6 +99,7 @@ def run_radar(
 ) -> RadarReport:
     """两条线默认同时跑。only='projects'|'news' 时只跑一条。
 
+    backfill=True 表示补抓历史日期：只跑资讯、项目线留一句说明，也不改项目池。
     client 默认按 .env；显式传 None 表示强制关键词兜底。
     测试可注入 projects_fetcher / news_fetcher。
     """
@@ -103,6 +109,14 @@ def run_radar(
     pool_file = pool_path or POOL_FILE
     sources = load_sources()
 
+    actual_today = datetime.now(BEIJING).date()
+    if today is not None and today > actual_today:
+        raise ValueError("不能抓未来的日期")
+    # 历史日期：Trending / HelloGitHub 没有那天的快照，只能补资讯
+    is_past = backfill and today is not None and today < actual_today
+    if backfill and not is_past:
+        raise ValueError("补抓只用于历史日期")
+
     if client is _MISSING:
         llm_client: LLMClient | None = _make_client()
     else:
@@ -110,7 +124,13 @@ def run_radar(
 
     pool = load_pool(pool_file)
     fetch_projects = projects_fetcher or fetch_projects_line
-    fetch_news = news_fetcher or fetch_news_line
+    if news_fetcher is not None:
+        fetch_news = news_fetcher
+    elif is_past:
+        def fetch_news(selected: Sources) -> tuple[list[NewsItem], str | None]:
+            return fetch_news_line(selected, for_date=today)
+    else:
+        fetch_news = fetch_news_line
 
     run_projects = only in (None, "projects")
     run_news = only in (None, "news")
@@ -118,6 +138,11 @@ def run_radar(
     projects_error: str | None = None
     news_error: str | None = None
     news_items: list[NewsItem] = []
+
+    if is_past:
+        run_projects = False
+        run_news = True
+        projects_error = "补抓历史日期：项目线只有此刻的榜单，这一天没法回溯"
 
     if run_projects and run_news:
         # 同时运行：一条线卡住或失败，不耽误另一条出结果
@@ -131,7 +156,7 @@ def run_radar(
         news_error = "本次只跑了项目线"
     elif run_news:
         news_items, news_error = fetch_news(sources)
-        projects_error = "本次只跑了资讯线"
+        projects_error = projects_error or "本次只跑了资讯线"
 
     document = build_daily(
         pool=pool,
@@ -141,13 +166,16 @@ def run_radar(
         today=today,
         projects_error=projects_error,
         news_error=news_error,
+        backfill=is_past,
     )
     daily_path = save_daily(document, daily_dir)
-    pool_saved = save_pool(pool, pool_file)
+    # 补抓历史日期不改项目池：避免污染今天的推荐状态
+    pool_saved = pool_file if is_past else save_pool(pool, pool_file)
     return RadarReport(
         document=document,
         daily_path=daily_path,
         pool_path=pool_saved,
         projects_ok=document["projects"]["status"] == "ok",
         news_ok=document["news"]["status"] == "ok",
+        backfill=is_past,
     )

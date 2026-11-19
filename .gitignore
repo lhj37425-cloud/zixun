@@ -12,6 +12,7 @@ site/
 sandbox/
 logs/
 data/pool.json
+data/backup/
 
 # 系统自动生成的文件
 Thumbs.db

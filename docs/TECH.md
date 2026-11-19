@@ -41,6 +41,8 @@
 6. agent 按 `prompts/dissect.md` 拆解，结果写进 `content/projects/`。
 7. 重新生成网页，拆解页显示最新进度。
 
+不想等到 9 点，或者想补某一天时：双击 `scripts/serve.bat` 启动本地服务，在页面顶部选日期、点「抓取这一天」；服务会跑同一套工作流（历史日期只跑资讯线），然后重新生成网页。
+
 ### 3.1 项目线：今天拆哪个
 
 1. 抓取 GitHub Trending（每天）。
@@ -103,10 +105,21 @@
 
 ### 3.7 agent 连接
 
-- **规则**：`AGENTS.md` 写开发规则；`CLAUDE.md` 用一行 `@AGENTS.md` 引用它；TRAE 的 `.trae/rules/project_rules.md` 用一句话指向它（格式在 B-5.6 用 TRAE 实测）。
+- **规则**：`AGENTS.md` 写开发规则；`CLAUDE.md` 用一行 `@AGENTS.md` 引用它；TRAE 的 `.trae/rules/project_rules.md` 用一句话指向它。B-5.6 实测（2026-11-19）：TRAE 会自动读取 `.trae/rules/project_rules.md`，不需要 frontmatter 或任何特殊标记，普通 Markdown 正文即可；同一份规则里 `AGENTS.md` 也会被一并读进来。
 - **拆解说明**：`prompts/dissect.md`（B-5.1，已建）。
 - **复制的指令**（B-5.3 定稿）：`请按照 prompts/dissect.md 拆解 https://github.com/作者/项目名`。由 `dissect_instruction()` 生成；「开始拆解」和「继续拆解」复制同一句。
 - **agent 拆解时要做的事**（详细写在 `prompts/dissect.md`）：用 `uv run dd new-project <仓库>` 建项目文件夹；把对方的项目下载到 `sandbox/`；按四步写文件；新概念写进术语表；每步结束后运行 `uv run dd build` 重新生成网页。
+
+### 3.8 本地服务：日期切换和手动抓取
+
+- 浏览器里的静态网页不能直接让电脑跑 Python，所以「抓取这一天」按钮配一个小服务：`uv run dd serve --open`（`server.py`，只监听 `127.0.0.1`，同局域网别的设备连不上）。
+- 接口只有两个：
+  - `GET /api/days`：返回 `content/daily/` 里已有的日期，新的在前，外加最新日期。
+  - `POST /api/radar`，body `{"date": "2026-11-13"}`：抓取并重新生成网页，再返回两条线的状态。
+- 抓取时用进程内锁，同一时间只跑一次，连点两次不会把文件写乱。
+- 日期规则：等于今天就跑两条线；早于今天按「补抓」处理（只跑资讯线、按那天的北京时间 0～24 点过滤、不改项目池）；晚于今天直接拒绝（HTTP 400）。
+- 页面上 `.day-tools` 是这一块：日期框 + 按钮 + 状态文字。`day_index`（有数据的日期、最新日期）在生成网页时写进页面；页面是 `file://` 打开时，按钮只提示去启动服务，不发请求。
+- 覆盖保护：`save_daily` 发现那天的文件已存在时，先复制到 `data/backup/<日期>-<时间>.json` 再写新文件。
 
 ## 4. 项目结构
 
@@ -141,7 +154,8 @@ daily-dissect/
 ├─ src/daily_dissect/
 │  ├─ __init__.py          # 版本号（B-3.1，已建）
 │  ├─ paths.py             # 项目里各个文件夹的位置（B-3.4，已建）
-│  ├─ cli.py               # 命令入口：dd build / open / radar / update / new-project
+│  ├─ cli.py               # 命令入口：dd build / open / radar / update / serve / new-project
+│  ├─ server.py            # dd serve：本机小服务，网页里按日期抓取（B-8.1）
 │  ├─ new_project.py       # dd new-project：建拆解文件夹和四步模板（B-5.2）
 │  ├─ sources.py           # 读取 config/sources.toml（B-4.1，已建）
 │  ├─ projects/            # 项目线：解析 Trending/HelloGitHub、项目池（B-4.2，已建；打分挑选在后面）
@@ -186,6 +200,8 @@ daily-dissect/
 │  ├─ projects/            # 每个拆解项目一个文件夹（B-3.2，已放示例）
 │  └─ glossary.md          # 术语表（B-3.2，已建）
 ├─ data/pool.json          # 项目池（B-4.2）
+├─ data/backup/            # 重抓某天前的旧文件备份，不提交（B-8.1）
+├─ scripts/serve.bat       # 双击启动本地服务并打开网页（B-8.1）
 ├─ scripts/update.bat      # 双击手动更新（项目线+资讯线，B-6.1）
 ├─ scripts/update-projects.bat / update-news.bat  # 只重跑一条线（B-6.1）
 ├─ scripts/run-daily.bat   # 任务计划调用：抓取+生成，写入 logs/（B-6.2）
@@ -254,6 +270,7 @@ daily-dissect/
 - `category`：只能是 `新能力`、`新工具`、`新产品`、`落地案例` 之一。
 - 没用上 DeepSeek 时，`llm.used` 为 `false`，说明字段为空字符串，网页显示"未生成解读"。
 - `sample`：可选。示例数据写 `true`，网页上会提示"这是示例数据"；真实数据不写这个字段。
+- `backfill`：可选。手动补抓的历史日期写 `true`，网页上会说明"这一天只能补资讯"。
 
 ### 5.2 项目池：`data/pool.json`
 
@@ -378,6 +395,8 @@ enabled = true
 | 卸载自动更新 | 双击 `scripts/uninstall-daily-task.bat` |
 | 定时任务立刻试跑 | PowerShell：`Start-ScheduledTask -TaskName DailyDissect`；日志在 `logs/daily-日期.log` |
 | 生成网页 | `uv run dd build` |
+| 启动本地服务（网页里选日期、手动抓取） | `uv run dd serve --open`；或双击 `scripts/serve.bat` |
+| 换端口 | `uv run dd serve --port 8766` |
 | 生成网页，再用浏览器打开今日页 | `uv run dd open`；平时也可以直接双击 `site/index.html`，或者用浏览器收藏 |
 | 为要拆的项目建文件夹 | `uv run dd new-project <仓库地址>` |
 | 跑测试 | `uv run pytest` |
@@ -404,6 +423,9 @@ enabled = true
 | DeepSeek 改模型名 | 调用失败 | 模型名放在 `.env` 里，可以直接改；失败时自动走关键词兜底 |
 | 泳道图主步骤过多时会很宽 | 适应窗口后文字偏小 | 提示词限制 5～8 个主步骤；弹层支持 25%～240% 缩放和拖动，Dagre 只有约 96KB，今日页不加载 |
 | 9 点电脑没开 | 今日页没更新 | 任务计划设置"错过时间后尽快运行" |
+| 本地服务没开就点「抓取这一天」 | 抓取失败 | 页面会提示先双击 `scripts/serve.bat`；翻看不需要服务 |
+| 历史日期的 RSS 源大多只保留最近内容 | 补抓旧日期时资讯可能很少或为空 | 只筛那天 0～24 点的内容，抓到多少算多少；页面上能看出结果 |
+| 补抓历史日期时项目线没有历史快照 | 旧日期页会缺项目 | 项目线显示"这一天只能补资讯"，不拿当下的榜单冒充 |
 | 以后做手机访问时，在局域网开服务 | Windows 防火墙会弹窗 | 到时候选"允许在专用网络上访问" |
 
 ## 10. 技术决策记录
@@ -433,6 +455,9 @@ enabled = true
 | 2026-11-16 | B-3.4 验收后删除 `prototype/`（用户同意） | 生成器已经能生成一样的页面；原型和 `web/static/` 各留一份样式，以后改样式容易只改一边。原型留在 git 提交 e92b35f 里，随时能找回 |
 | 2026-11-16 | 第一版不开本地服务：浏览器直接打开 `site/` 里的网页文件；`dd open` 先生成网页，再交给系统用默认浏览器打开（和双击一样）。原计划的 `dd serve` 不做了 | 用户决定先只在电脑上用（PRD v1.2）。不用一直开着一个服务，开机就能看，也不会弹防火墙提示。B-3.5 用无界面的 Edge 实测：直接打开文件时样式、流程图、亮暗色都正常，剪贴板接口可用 |
 | 2026-11-18 | 流程图改为「Mermaid 图源码 + Dagre 主路径布局 + 本站泳道渲染」 | 用户认为原流程图不清晰。泳道能分清用户、Agent 和工具产物；回边单独走底部，避免和主路径抢视线。继续手写布局会增加分支和循环的维护成本，因此引入本地 Dagre，同时保留 `file://` 打开和原有全屏交互 |
+| 2026-11-19 | 恢复 `dd serve`，只用来在网页里手动抓取（PRD v1.3、F6） | 用户的「抓取这一天」按钮需要后端；静态网页做不到。只监听 `127.0.0.1`，翻看仍然双击文件，不开服务 |
+| 2026-11-19 | 历史日期只跑资讯线，页面标 `backfill` | RSS 可以按发布日筛，Trending 没有历史快照；不拿今天的榜单冒充那一天 |
+| 2026-11-19 | 覆盖今日数据前先复制到 `data/backup/` | 手动重抓会覆盖，备份后误操作可恢复；目录不提交 |
 | 2026-11-18 | 另做一份可拖动画板稿 `docs/flow-board.html`（源文件 `flow-board.excalidraw`），作为流程重排的参考，并把确认后的版式同步回站内 Mermaid 数据 | 用户反馈站内图观看不方便、拖动会连文字一起选中。画板稿可以自由缩放、拖动节点，标签跟着节点走；用户确认版式后，站内只同步「节点、泳道、回边」这些数据，继续用轻量静态渲染，不把 3 MB 的编辑器塞进每个拆解页。 |
 | 2026-11-18 | 围栏代码块用墨色终端 `--code-bg`（亮 `#1f2430` / 暗 `#171c26`），行内代码用淡蓝底深蓝字 `--inline-code-*`（亮 `#eaf2fb` / `#14548c`）；长命令 `pre-wrap` 自动换行；提示条 `.notice` 改成白底 + 琥珀左边线 | 用户反馈暖米色代码块刺眼、长命令底部还有一条粗灰色滚动条。先试中性灰 `#f4f4f2` 和冷蓝灰 `#eef2f7`，用户最终选墨色终端；行内代码跟着变深后用户觉得在正文里不协调，改为淡蓝底深蓝字，和站点链接/强调色同一家族。命令换行比横向滚动更好读（复制出来仍是完整一行）。提示条只保留小面积琥珀作为强调，不再整块泛黄 |
 | 2026-11-18 | 整站配色换成 GitHub README 的 Primer 体系：亮色白底 `#ffffff`、正文 `#1f2328`、边框 `#d1d9e0`、链接 `#0969da`、代码块 `#f6f8fa`；暗色 `#0d1117 / #151b23 / #e6edf3 / #4493f8`；流程图同步为中性灰 + 紫 `#8250df` | 用户反馈零散调代码颜色仍然「看着不舒服」，希望仿照 GitHub README 整体重做。只改一块会导致页面里暖米色、墨色终端、淡蓝行内代码三种体系打架；统一到 GitHub 的中性灰 + 蓝色链接后，正文、代码、卡片、流程图共用一套灰阶，观感最稳，也符合本项目「静态、无 CDN、纯阅读」的定位 |

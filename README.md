@@ -28,6 +28,7 @@
 
 - 每天 9 点自动更新：双击一次 `scripts/install-daily-task.bat` 装好即可；那时电脑没开，开机后会补跑。日志在 `logs/`。
 - 想手动更新，双击 `scripts/update.bat`（或只跑项目线 / 资讯线的脚本）。
+- 想抓某一天（比如补之前的），双击 `scripts/serve.bat`，在页面顶部选日期、点「抓取这一天」；历史日期只补资讯。用完关掉那个窗口就行。
 - 在电脑浏览器里看：直接双击 `site/index.html`，或者运行 `uv run dd open`。手机上看以后再做。
 
 ## 开发环境
@@ -54,6 +55,12 @@ uv run dd build
 
 ```bash
 uv run dd open
+```
+
+启动本地服务（网页里可以选日期、手动抓取；只对本机开放）：
+
+```bash
+uv run dd serve --open
 ```
 
 ## 换一个 agent 接着做
